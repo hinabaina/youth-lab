@@ -1,0 +1,17 @@
+# зависимости и сборка
+node_modules/
+dist/
+.astro/
+
+# локальные файлы
+.env
+.env.*
+!.env.example
+.DS_Store
+*.log
+.wrangler/
+.dev.vars
+
+# админка копируется из node_modules при сборке (scripts/copy-cms.mjs)
+public/admin/sveltia-cms.js
+public/admin/chunks/

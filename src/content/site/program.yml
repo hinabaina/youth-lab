@@ -1,0 +1,71 @@
+ru:
+  note: Точное время начала и окончания объявим позже.
+  stages:
+    - time: ''
+      duration: ''
+      title: Регистрация участников
+      description: Команды получают бейджи и проходят в свои комитеты.
+    - time: ''
+      duration: 20–30 мин
+      title: Торжественное открытие и инструктаж
+      description: Приветствие, представление организаторов и жюри, разъяснение правил, комитетов, требований к результатам и системы оценивания.
+    - time: ''
+      duration: 60 мин
+      title: 'Сессия 1: исследовательский этап'
+      description: Определить конкретную проблему, сформулировать исследовательский вопрос, найти надёжные источники, собрать данные и разработать предварительное решение.
+    - time: ''
+      duration: 10 мин
+      title: Перерыв
+      description: Отдых и неформальное общение.
+    - time: ''
+      duration: 80 мин
+      title: 'Сессия 2: письменный этап'
+      description: Превратить исследовательские заметки в исследовательскую записку, доработать решение, добавить ссылки на источники, проверить реализуемость и сдать PDF-файл.
+    - time: ''
+      duration: 50 мин
+      title: Обед
+      description: ''
+    - time: ''
+      duration: около 60 мин
+      title: 'Сессия 3: устный этап'
+      description: Презентация 3–4 минуты и 2 минуты вопросов и ответов на каждую команду. Жюри выставляет баллы во время выступлений.
+    - time: ''
+      duration: 15–40 мин
+      title: Итоги и награждение
+      description: Жюри проверяет итоговые суммы и утверждает награды. Победителей награждают, все участники получают сертификаты.
+kk:
+  note: Басталу және аяқталу уақытын кейінірек хабарлаймыз.
+  stages:
+    - title: Қатысушыларды тіркеу
+    - title: Салтанатты ашылу және нұсқаулық
+    - title: '1-сессия: зерттеу кезеңі'
+    - title: Үзіліс
+    - title: '2-сессия: жазбаша кезең'
+    - title: Түскі ас
+    - title: '3-сессия: ауызша кезең'
+    - title: Қорытынды және марапаттау
+en:
+  note: We will announce the exact start and end times later.
+  stages:
+    - title: Participant registration
+      description: Teams collect their badges and go to their committees.
+    - duration: 20–30 min
+      title: Opening ceremony and briefing
+      description: Welcome, introduction of the organisers and the jury, explanation of the rules, committees, deliverables and scoring.
+    - duration: 60 min
+      title: 'Session 1: research'
+      description: Define a specific problem, formulate a research question, find reliable sources, collect data and develop a preliminary solution.
+    - duration: 10 min
+      title: Break
+      description: Rest and informal networking.
+    - duration: 80 min
+      title: 'Session 2: writing'
+      description: Turn research notes into a Research Solution Brief, develop the solution, add citations, check feasibility and submit the PDF.
+    - duration: 50 min
+      title: Lunch
+    - duration: about 60 min
+      title: 'Session 3: presentations'
+      description: A 3–4 minute presentation and 2 minutes of questions and answers per team. The jury scores during the presentations.
+    - duration: 15–40 min
+      title: Results and awards
+      description: The jury checks the totals and approves the awards. Winners are awarded and every participant receives a certificate.

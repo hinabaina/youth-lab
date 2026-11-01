@@ -1,0 +1,74 @@
+---
+/** Подвал: место проведения, контакты, организатор. */
+import { localizePath, PAGES } from '../i18n/routing';
+import { useTranslations, type Lang } from '../i18n/ui';
+import type { getEvent } from '../lib/content';
+import { formatPhone, instagramHandle, instagramUrl, phoneHref } from '../lib/format';
+
+interface Props {
+  lang: Lang;
+  event: Awaited<ReturnType<typeof getEvent>>;
+}
+
+const { lang, event } = Astro.props;
+const t = useTranslations(lang);
+const place = [event.venue, event.address, event.city].filter(Boolean).join(', ');
+---
+
+<footer class="bg-navy-950 text-cream-100">
+  <div class="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-3 lg:px-8">
+    <div class="space-y-3">
+      <img src="/brand/logo-cream.png" alt={event.name} width="160" height="114" class="h-auto w-40" />
+      <p class="text-sm text-cream-200">{t('footer.organizer')}</p>
+    </div>
+
+    <div class="space-y-2 text-sm">
+      <h2 class="font-display text-base font-semibold text-cream-50">{t('home.contacts')}</h2>
+      {place && <p class="text-cream-200">{place}</p>}
+      {
+        event.mapUrl && (
+          <p>
+            <a href={event.mapUrl} target="_blank" rel="noopener" class="underline decoration-gold-500 underline-offset-4">
+              {t('event.map')}
+              <span class="sr-only"> ({t('a11y.newTab')})</span>
+            </a>
+          </p>
+        )
+      }
+      {
+        event.phone && (
+          <p>
+            <a href={phoneHref(event.phone)} class="hover:text-gold-400">
+              {formatPhone(event.phone)}
+            </a>
+          </p>
+        )
+      }
+      {
+        event.instagram && (
+          <p>
+            <a href={instagramUrl(event.instagram)} target="_blank" rel="noopener" class="hover:text-gold-400">
+              Instagram: @{instagramHandle(event.instagram)}
+              <span class="sr-only"> ({t('a11y.newTab')})</span>
+            </a>
+          </p>
+        )
+      }
+      {
+        event.email && (
+          <p>
+            <a href={`mailto:${event.email}`} class="hover:text-gold-400">
+              {event.email}
+            </a>
+          </p>
+        )
+      }
+    </div>
+
+    <ul class="space-y-2 text-sm">
+      <li><a href={localizePath(PAGES.committees, lang)} class="hover:text-gold-400">{t('nav.committees')}</a></li>
+      <li><a href={localizePath(PAGES.rules, lang)} class="hover:text-gold-400">{t('nav.rules')}</a></li>
+      <li><a href={localizePath(PAGES.register, lang)} class="hover:text-gold-400">{t('nav.register')}</a></li>
+    </ul>
+  </div>
+</footer>

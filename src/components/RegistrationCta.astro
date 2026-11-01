@@ -1,0 +1,72 @@
+---
+/**
+ * Кнопка или статус регистрации — зависит от настроек в админке (раздел «Регистрация»):
+ * «Открыта» — кнопка на форму, «Скоро откроется» — дата открытия, если известна, «Закрыта» — плашка.
+ */
+import { useTranslations, type Lang } from '../i18n/ui';
+import type { getRegistration } from '../lib/content';
+import { formatDate } from '../lib/format';
+
+interface Props {
+  lang: Lang;
+  registration: Awaited<ReturnType<typeof getRegistration>>;
+  /** dark — на тёмно-синем фоне, light — на светлом. */
+  tone?: 'dark' | 'light';
+  showNote?: boolean;
+}
+
+const { lang, registration, tone = 'light', showNote = true } = Astro.props;
+const t = useTranslations(lang);
+const { status, formUrl, opensOn, deadline, note } = registration;
+
+const pill =
+  tone === 'dark'
+    ? 'border-navy-700 bg-navy-800 text-cream-100'
+    : 'border-cream-200 bg-white text-navy-900';
+---
+
+<div class="flex flex-col items-start gap-3">
+  {
+    status === 'open' && (
+      <a
+        href={formUrl}
+        target="_blank"
+        rel="noopener"
+        class="inline-flex items-center gap-2 rounded-full bg-gold-500 px-7 py-3.5 font-display text-base font-bold text-navy-950 shadow-sm transition-colors hover:bg-gold-400"
+      >
+        {t('cta.open')}
+        <svg aria-hidden="true" viewBox="0 0 20 20" class="size-4">
+          <path d="M7 13 13 7M8 7h5v5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+        <span class="sr-only">({t('a11y.newTab')})</span>
+      </a>
+    )
+  }
+  {
+    status === 'soon' && (
+      <p class:list={['inline-flex items-center gap-2 rounded-full border px-5 py-3 font-semibold', pill]}>
+        <span aria-hidden="true" class="size-2 rounded-full bg-gold-500" />
+        {opensOn ? t('cta.opensOn', { date: formatDate(opensOn, lang) }) : t('cta.soon')}
+      </p>
+    )
+  }
+  {
+    status === 'closed' && (
+      <p class:list={['inline-flex rounded-full border px-5 py-3 font-semibold opacity-90', pill]}>
+        {t('cta.closed')}
+      </p>
+    )
+  }
+  {
+    status === 'open' && deadline && (
+      <p class:list={['text-sm', tone === 'dark' ? 'text-cream-200' : 'text-navy-700']}>
+        {t('cta.deadline', { date: formatDate(deadline, lang) })}
+      </p>
+    )
+  }
+  {
+    showNote && note && (
+      <p class:list={['max-w-prose text-sm', tone === 'dark' ? 'text-cream-200' : 'text-navy-700']}>{note}</p>
+    )
+  }
+</div>

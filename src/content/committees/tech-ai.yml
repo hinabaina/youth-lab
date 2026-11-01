@@ -1,0 +1,32 @@
+ru:
+  order: 1
+  title: Технологии и ИИ
+  topics:
+    - ИИ в образовании
+    - цифровое неравенство
+    - онлайн-безопасность
+  sources:
+    - ЮНЕСКО
+    - ОЭСР
+    - МСЭ
+  language: ''
+kk:
+  title: Технологиялар және ЖИ
+  topics:
+    - білім берудегі ЖИ
+    - цифрлық теңсіздік
+    - онлайн қауіпсіздік
+  sources:
+    - ЮНЕСКО
+    - OECD
+    - ITU
+en:
+  title: Technology and AI
+  topics:
+    - AI in education
+    - digital inequality
+    - online safety
+  sources:
+    - UNESCO
+    - OECD
+    - ITU

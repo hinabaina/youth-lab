@@ -1,0 +1,122 @@
+---
+/** Регистрация: статус и ссылка на форму, условия участия, оплата, контакты для вопросов. */
+import Markdown from '../../components/Markdown.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import RegistrationCta from '../../components/RegistrationCta.astro';
+import Section from '../../components/Section.astro';
+import { getLang, localeStaticPaths } from '../../i18n/routing';
+import { useTranslations } from '../../i18n/ui';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getEvent, getRegistration } from '../../lib/content';
+import {
+  formatDate,
+  formatNumber,
+  formatPhone,
+  formatWeekday,
+  instagramHandle,
+  instagramUrl,
+  isoDate,
+  phoneHref,
+} from '../../lib/format';
+
+export function getStaticPaths() {
+  return localeStaticPaths();
+}
+
+const lang = getLang(Astro.params.locale);
+const t = useTranslations(lang);
+const [event, registration] = await Promise.all([getEvent(lang), getRegistration(lang)]);
+
+const time = event.timeStart
+  ? [event.timeStart, event.timeEnd].filter(Boolean).join('–')
+  : t('event.timeTba');
+const fee = event.fee > 0 ? `${formatNumber(event.fee, lang)} ${t('event.feeUnit')}` : t('event.free');
+const place = [event.venue, event.address, event.city].filter(Boolean).join(', ');
+---
+
+<BaseLayout lang={lang} page="register" title={t('register.title')}>
+  <PageHeader title={t('register.title')}>
+    <div class="mt-8">
+      <RegistrationCta lang={lang} registration={registration} tone="dark" />
+    </div>
+  </PageHeader>
+
+  <Section>
+    <div class="grid gap-12 lg:grid-cols-[minmax(0,1fr)_22rem]">
+      <div>
+        <h2 class="text-2xl font-bold">{t('register.howTo')}</h2>
+        <Markdown source={registration.body} class="mt-4" />
+      </div>
+
+      <aside class="h-fit rounded-2xl border border-cream-200 bg-white p-6">
+        <dl class="space-y-5">
+          <div>
+            <dt class="text-sm text-navy-700">{t('event.date')}</dt>
+            <dd class="font-semibold">
+              <time datetime={isoDate(event.date)}>{formatDate(event.date, lang)}</time>, {formatWeekday(event.date, lang)}
+            </dd>
+            <dd class="text-sm text-navy-700">{time}</dd>
+          </div>
+          <div>
+            <dt class="text-sm text-navy-700">{t('event.venue')}</dt>
+            <dd class="font-semibold">{place}</dd>
+          </div>
+          {
+            event.audience && (
+              <div>
+                <dt class="text-sm text-navy-700">{t('event.audience')}</dt>
+                <dd class="font-semibold">{event.audience}</dd>
+              </div>
+            )
+          }
+          {
+            event.teamSize && (
+              <div>
+                <dt class="text-sm text-navy-700">{t('event.team')}</dt>
+                <dd class="font-semibold">{event.teamSize}</dd>
+              </div>
+            )
+          }
+          <div>
+            <dt class="text-sm text-navy-700">{t('event.fee')}</dt>
+            <dd class="font-semibold">{fee}</dd>
+            <dd class="mt-1 text-sm text-navy-700">{event.feeNote || t('register.payment')}</dd>
+          </div>
+        </dl>
+      </aside>
+    </div>
+  </Section>
+
+  {
+    (event.phone || event.instagram) && (
+      <Section tone="cream">
+        <p class="text-lg font-semibold">{t('contacts.questions')}</p>
+        <ul class="mt-4 flex flex-wrap gap-3">
+          {event.phone && (
+            <li>
+              <a
+                href={phoneHref(event.phone)}
+                class="inline-flex rounded-full border border-navy-900 px-5 py-2.5 font-semibold hover:bg-navy-900 hover:text-cream-50"
+              >
+                {formatPhone(event.phone)}
+              </a>
+            </li>
+          )}
+          {event.instagram && (
+            <li>
+              <a
+                href={instagramUrl(event.instagram)}
+                target="_blank"
+                rel="noopener"
+                class="inline-flex rounded-full border border-navy-900 px-5 py-2.5 font-semibold hover:bg-navy-900 hover:text-cream-50"
+              >
+                Instagram @{instagramHandle(event.instagram)}
+                <span class="sr-only"> ({t('a11y.newTab')})</span>
+              </a>
+            </li>
+          )}
+        </ul>
+      </Section>
+    )
+  }
+</BaseLayout>

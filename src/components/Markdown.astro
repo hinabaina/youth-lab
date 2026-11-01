@@ -1,0 +1,14 @@
+---
+/** Текст из админки в формате Markdown. */
+import { renderMarkdown } from '../lib/format';
+
+interface Props {
+  source: string;
+  class?: string;
+}
+
+const { source, class: className } = Astro.props;
+const html = renderMarkdown(source);
+---
+
+{html && <div class:list={['prose-content', className]} set:html={html} />}

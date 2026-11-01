@@ -1,0 +1,35 @@
+ru:
+  order: 4
+  title: Политика, право и общество
+  topics:
+    - участие молодёжи
+    - права
+    - равенство
+    - государственная политика
+  sources:
+    - ООН
+    - УВКПЧ
+    - официальные правительственные порталы
+  language: ''
+kk:
+  title: Саясат, құқық және қоғам
+  topics:
+    - жастардың қатысуы
+    - құқықтар
+    - теңдік
+    - мемлекеттік саясат
+  sources:
+    - БҰҰ
+    - OHCHR
+    - ресми үкіметтік порталдар
+en:
+  title: Politics, Law and Society
+  topics:
+    - youth participation
+    - rights
+    - equality
+    - public policy
+  sources:
+    - UN
+    - OHCHR
+    - official government portals

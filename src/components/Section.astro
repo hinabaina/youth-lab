@@ -1,0 +1,28 @@
+---
+/** Блок страницы с заголовком h2. */
+interface Props {
+  id?: string;
+  title?: string;
+  tone?: 'white' | 'cream';
+  class?: string;
+}
+
+const { id, title, tone = 'white', class: className } = Astro.props;
+---
+
+<section
+  id={id}
+  aria-labelledby={id && title ? `${id}-title` : undefined}
+  class:list={[tone === 'cream' ? 'bg-cream-100' : 'bg-cream-50', 'py-14 sm:py-20', className]}
+>
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+    {
+      title && (
+        <h2 id={id ? `${id}-title` : undefined} class="mb-8 text-2xl font-bold sm:text-3xl">
+          {title}
+        </h2>
+      )
+    }
+    <slot />
+  </div>
+</section>

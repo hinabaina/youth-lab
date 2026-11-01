@@ -1,0 +1,486 @@
+# Настройки админки (Sveltia CMS): https://<адрес сайта>/admin/
+#
+# Каждое поле здесь соответствует полю в src/lib/schemas.ts. Если добавляете или переименовываете поле,
+# поменяйте его в обоих местах, иначе сборка сайта остановится с ошибкой проверки.
+#
+# Переводы: русская версия основная и обязательная. Казахский и английский можно заполнять постепенно:
+# пустое поле перевода на сайте заменяется русским текстом (src/lib/localize.ts).
+
+backend:
+  name: github
+  repo: hinabaina/youth-lab
+  branch: main
+  # Вход через GitHub обслуживают функции из папки functions/api на этом же сайте.
+  # Адрес сайта (base_url) подставляет src/pages/admin/index.astro.
+  auth_endpoint: api/auth
+
+app_title: Youth Research Summit · админка
+logo:
+  src: /icon-512.png
+
+media_folder: public/uploads
+public_folder: /uploads
+media_libraries:
+  default:
+    config:
+      max_file_size: 20000000
+      slugify_filename: true
+      # Фото с телефона уменьшаются и сжимаются в WebP прямо в браузере, до загрузки на сайт.
+      transformations:
+        raster_image:
+          format: webp
+          quality: 85
+          width: 2000
+          height: 2000
+
+i18n:
+  structure: single_file
+  locales: [ru, kk, en]
+  default_locale: ru
+
+editor:
+  preview: false
+
+singletons:
+  - name: event
+    label: Основное — дата, место, цена, контакты
+    icon: event
+    file: src/content/site/event.yml
+    i18n: true
+    fields:
+      - name: name
+        label: Название
+        widget: string
+        i18n: true
+        required: [ru]
+      - name: tagline
+        label: Подзаголовок
+        hint: Одна фраза под названием на главной странице.
+        widget: string
+        i18n: true
+        required: false
+      - name: date
+        label: Дата саммита
+        widget: datetime
+        type: date
+      - name: timeStart
+        label: Начало
+        hint: Например, 09:00. Пока время неизвестно, оставьте пустым — на сайте будет «Время уточняется».
+        widget: string
+        required: false
+      - name: timeEnd
+        label: Окончание
+        hint: Например, 17:00.
+        widget: string
+        required: false
+      - name: venue
+        label: Место проведения
+        hint: Название площадки.
+        widget: string
+        i18n: true
+        required: [ru]
+      - name: city
+        label: Город
+        widget: string
+        i18n: true
+        required: false
+      - name: address
+        label: Адрес
+        widget: string
+        i18n: true
+        required: false
+      - name: mapUrl
+        label: Ссылка на карту
+        hint: Ссылка из 2ГИС, Яндекс Карт или Google Maps. Если оставить пустым, кнопки «Открыть на карте» не будет.
+        widget: string
+        required: false
+        pattern: ['^https?://\S+$', 'Вставьте полную ссылку, которая начинается с https://']
+      - name: audience
+        label: Кто может участвовать
+        widget: string
+        i18n: true
+        required: false
+      - name: teamSize
+        label: Состав команды
+        widget: string
+        i18n: true
+        required: false
+      - name: fee
+        label: Стоимость участия, ₸ с одного участника
+        hint: Только число, например 2500. Если участие бесплатное, поставьте 0.
+        widget: number
+        value_type: int
+        min: 0
+      - name: feeNote
+        label: Примечание к оплате
+        widget: text
+        i18n: true
+        required: false
+      - name: phone
+        label: Телефон
+        hint: Например, +77476653463. На сайте номер будет показан как +7 747 665 34 63.
+        widget: string
+        required: false
+      - name: instagram
+        label: Instagram
+        hint: Имя аккаунта без @, например youthlab_akx.
+        widget: string
+        required: false
+      - name: email
+        label: Почта
+        widget: string
+        required: false
+        pattern: ['^[^@\s]+@[^@\s]+\.[^@\s]+$', 'Проверьте адрес почты']
+
+  - name: registration
+    label: Регистрация
+    icon: how_to_reg
+    file: src/content/site/registration.yml
+    i18n: true
+    fields:
+      - name: status
+        label: Статус регистрации
+        hint: «Открыта» работает только вместе со ссылкой на форму. Без ссылки сайт покажет «Скоро откроется».
+        widget: select
+        default: soon
+        options:
+          - { label: Скоро откроется, value: soon }
+          - { label: Открыта, value: open }
+          - { label: Закрыта, value: closed }
+      - name: formUrl
+        label: Ссылка на форму регистрации
+        hint: Ссылка на Google Форму или другую форму. Кнопка «Зарегистрироваться» ведёт сюда.
+        widget: string
+        required: false
+        pattern: ['^https?://\S+$', 'Вставьте полную ссылку, которая начинается с https://']
+      - name: opensOn
+        label: Дата открытия регистрации
+        hint: Если указать, пока регистрация не открыта, на сайте будет «Регистрация откроется …».
+        widget: datetime
+        type: date
+        required: false
+      - name: deadline
+        label: Последний день регистрации
+        widget: datetime
+        type: date
+        required: false
+      - name: note
+        label: Короткое сообщение рядом с кнопкой
+        widget: text
+        i18n: true
+        required: false
+      - name: body
+        label: Подробности на странице «Регистрация»
+        widget: markdown
+        i18n: true
+        required: false
+
+  - name: home
+    label: Главная страница
+    icon: home
+    file: src/content/site/home.yml
+    i18n: true
+    fields:
+      - name: about
+        label: О саммите
+        widget: markdown
+        i18n: true
+        required: false
+      - name: facts
+        label: Цифры на главной
+        label_singular: факт
+        hint: 3–4 коротких факта, например «6» и «тематических комитетов».
+        widget: list
+        i18n: duplicate
+        required: false
+        summary: '{{fields.value}} {{fields.label}}'
+        fields:
+          - name: value
+            label: Число
+            widget: string
+          - name: label
+            label: Подпись
+            widget: string
+            i18n: true
+            required: [ru]
+
+  - name: program
+    label: Программа дня
+    icon: schedule
+    file: src/content/site/program.yml
+    i18n: true
+    fields:
+      - name: note
+        label: Примечание к программе
+        hint: Например, «Точное время объявим позже». Когда расписание готово, оставьте пустым.
+        widget: string
+        i18n: true
+        required: false
+      - name: stages
+        label: Этапы
+        label_singular: этап
+        widget: list
+        i18n: duplicate
+        required: false
+        summary: '{{fields.time}} {{fields.title}}'
+        fields:
+          - name: time
+            label: Время
+            hint: Например, 09:00–09:30.
+            widget: string
+            required: false
+          - name: duration
+            label: Длительность
+            hint: Например, 60 мин.
+            widget: string
+            i18n: true
+            required: false
+          - name: title
+            label: Название
+            widget: string
+            i18n: true
+            required: [ru]
+          - name: description
+            label: Описание
+            widget: text
+            i18n: true
+            required: false
+
+  - name: rules
+    label: Правила и оценка
+    icon: gavel
+    file: src/content/site/rules.yml
+    i18n: true
+    fields:
+      - name: intro
+        label: Вступление
+        widget: markdown
+        i18n: true
+        required: false
+      - name: sections
+        label: Разделы правил
+        label_singular: раздел
+        widget: list
+        i18n: duplicate
+        required: false
+        summary: '{{fields.title}}'
+        fields:
+          - name: title
+            label: Заголовок
+            widget: string
+            i18n: true
+            required: [ru]
+          - name: body
+            label: Текст
+            widget: markdown
+            i18n: true
+            required: false
+      - name: rubrics
+        label: Критерии оценки
+        label_singular: этап оценки
+        widget: list
+        i18n: duplicate
+        required: false
+        summary: '{{fields.title}}'
+        fields:
+          - name: title
+            label: Этап
+            hint: Например, «Письменное исследование».
+            widget: string
+            i18n: true
+            required: [ru]
+          - name: criteria
+            label: Критерии
+            label_singular: критерий
+            widget: list
+            summary: '{{fields.name}} — {{fields.max}}'
+            fields:
+              - name: name
+                label: Критерий
+                widget: string
+                i18n: true
+                required: [ru]
+              - name: max
+                label: Максимум баллов
+                widget: number
+                value_type: int
+                min: 0
+              - name: focus
+                label: Что оценивается
+                widget: text
+                i18n: true
+                required: false
+      - name: awards
+        label: Награды
+        label_singular: награда
+        widget: list
+        i18n: true
+        required: false
+        field:
+          name: award
+          label: Награда
+          widget: string
+      - name: document
+        label: Положение (PDF)
+        hint: На странице правил появится кнопка «Скачать Положение». Для казахской и английской версий можно загрузить свои файлы.
+        widget: file
+        accept: .pdf,application/pdf
+        i18n: true
+        required: false
+
+  - name: results
+    label: Итоги
+    icon: emoji_events
+    file: src/content/site/results.yml
+    i18n: true
+    fields:
+      - name: published
+        label: Показать итоги на сайте
+        hint: Включите после саммита. Тогда в меню появится раздел «Итоги».
+        widget: boolean
+        default: false
+      - name: intro
+        label: Текст
+        widget: markdown
+        i18n: true
+        required: false
+      - name: winners
+        label: Победители
+        label_singular: победитель
+        widget: list
+        i18n: duplicate
+        required: false
+        summary: '{{fields.team}}'
+        fields:
+          - name: committee
+            label: Комитет
+            widget: relation
+            collection: committees
+            value_field: '{{slug}}'
+            display_fields: [title]
+            search_fields: [title]
+            required: false
+          - name: award
+            label: Награда
+            widget: select
+            options:
+              - { label: Лучшая исследовательская работа, value: research }
+              - { label: Лучшее устное выступление, value: oral }
+              - { label: Команда-победитель комитета, value: team }
+          - name: team
+            label: Команда
+            widget: string
+          - name: school
+            label: Школа
+            widget: string
+            i18n: true
+            required: false
+      - name: photos
+        label: Фотографии
+        widget: image
+        multiple: true
+        required: false
+
+collections:
+  - name: committees
+    label: Комитеты
+    label_singular: комитет
+    icon: groups
+    folder: src/content/committees
+    extension: yml
+    format: yaml
+    i18n: true
+    reorder: true
+    slug: '{{uuid_short}}'
+    identifier_field: title
+    summary: '{{title}}'
+    fields:
+      - name: title
+        label: Название
+        widget: string
+        i18n: true
+        required: [ru]
+      - name: language
+        label: Язык комитета
+        hint: Оставьте пустым, пока язык не решён — тогда на сайте он не показывается.
+        widget: select
+        required: false
+        options:
+          - { label: Русский, value: ru }
+          - { label: Казахский, value: kk }
+          - { label: Английский, value: en }
+      - name: topics
+        label: Возможные направления
+        label_singular: направление
+        widget: list
+        i18n: true
+        required: false
+        field:
+          name: topic
+          label: Направление
+          widget: string
+      - name: sources
+        label: Рекомендуемые стартовые источники
+        label_singular: источник
+        widget: list
+        i18n: true
+        required: false
+        field:
+          name: source
+          label: Источник
+          widget: string
+
+  - name: jury
+    label: Жюри
+    label_singular: член жюри
+    icon: person
+    folder: src/content/jury
+    extension: yml
+    format: yaml
+    i18n: true
+    reorder: true
+    slug: '{{uuid_short}}'
+    identifier_field: name
+    summary: '{{name}}'
+    fields:
+      - name: name
+        label: Имя и фамилия
+        widget: string
+        i18n: true
+        required: [ru]
+      - name: role
+        label: Должность или регалии
+        widget: string
+        i18n: true
+        required: false
+      - name: photo
+        label: Фото
+        hint: Лучше квадратное, лицо по центру.
+        widget: image
+        required: false
+
+  - name: partners
+    label: Партнёры
+    label_singular: партнёр
+    icon: handshake
+    folder: src/content/partners
+    extension: yml
+    format: yaml
+    reorder: true
+    slug: '{{uuid_short}}'
+    identifier_field: name
+    summary: '{{name}}'
+    fields:
+      - name: name
+        label: Название
+        widget: string
+      - name: logo
+        label: Логотип
+        hint: PNG или SVG с прозрачным фоном.
+        widget: image
+        required: false
+      - name: url
+        label: Сайт партнёра
+        widget: string
+        required: false
+        pattern: ['^https?://\S+$', 'Вставьте полную ссылку, которая начинается с https://']

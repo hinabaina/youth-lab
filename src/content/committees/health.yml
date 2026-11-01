@@ -1,0 +1,32 @@
+ru:
+  order: 3
+  title: Здоровье и благополучие
+  topics:
+    - психическое здоровье
+    - общественное здравоохранение
+    - информирование о здоровье
+  sources:
+    - ВОЗ
+    - ЮНИСЕФ
+    - ПРООН
+  language: ''
+kk:
+  title: Денсаулық және әл-ауқат
+  topics:
+    - психикалық денсаулық
+    - қоғамдық денсаулық сақтау
+    - денсаулық туралы ақпараттандыру
+  sources:
+    - ДДСҰ
+    - ЮНИСЕФ
+    - UNDP
+en:
+  title: Health and Well-being
+  topics:
+    - mental health
+    - public health
+    - health communication
+  sources:
+    - WHO
+    - UNICEF
+    - UNDP

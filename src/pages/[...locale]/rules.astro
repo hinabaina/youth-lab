@@ -1,0 +1,108 @@
+---
+/** Правила и оценка: формат, требования к исследовательской записке, критерии жюри, награды. */
+import Markdown from '../../components/Markdown.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import Section from '../../components/Section.astro';
+import { getLang, localeStaticPaths } from '../../i18n/routing';
+import { useTranslations } from '../../i18n/ui';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getRules } from '../../lib/content';
+
+export function getStaticPaths() {
+  return localeStaticPaths();
+}
+
+const lang = getLang(Astro.params.locale);
+const t = useTranslations(lang);
+const rules = await getRules(lang);
+const grandTotal = rules.rubrics.reduce(
+  (sum, rubric) => sum + rubric.criteria.reduce((part, criterion) => part + criterion.max, 0),
+  0,
+);
+---
+
+<BaseLayout lang={lang} page="rules" title={t('rules.title')}>
+  <PageHeader title={t('rules.title')}>
+    {
+      rules.document && (
+        <a
+          href={rules.document}
+          class="mt-6 inline-flex items-center gap-2 rounded-full bg-gold-500 px-6 py-3 font-display font-bold text-navy-950 hover:bg-gold-400"
+          download
+        >
+          {t('rules.document')}
+        </a>
+      )
+    }
+  </PageHeader>
+
+  <Section>
+    <div class="max-w-3xl space-y-12">
+      {rules.intro && <Markdown source={rules.intro} class="text-lg" />}
+
+      {
+        rules.sections.map((section, index) => (
+          <section aria-labelledby={`rules-${index}`}>
+            <h2 id={`rules-${index}`} class="text-2xl font-bold">
+              {section.title}
+            </h2>
+            <Markdown source={section.body} class="mt-4" />
+          </section>
+        ))
+      }
+    </div>
+  </Section>
+
+  {
+    rules.rubrics.length > 0 && (
+      <Section id="rubrics" title={t('rules.rubrics')} tone="cream">
+        <div class="grid gap-6 lg:grid-cols-2">
+          {rules.rubrics.map((rubric) => {
+            const total = rubric.criteria.reduce((sum, criterion) => sum + criterion.max, 0);
+            return (
+              <section class="rounded-2xl border border-cream-200 bg-white p-6 sm:p-8">
+                <h3 class="text-xl font-bold">{rubric.title}</h3>
+                <ul class="mt-4 divide-y divide-cream-200">
+                  {rubric.criteria.map((criterion) => (
+                    <li class="py-4">
+                      <div class="flex items-baseline justify-between gap-4">
+                        <p class="font-semibold">{criterion.name}</p>
+                        <p class="shrink-0 font-display font-bold whitespace-nowrap text-gold-700">
+                          {criterion.max} <span class="sr-only">{t('rules.points')}</span>
+                        </p>
+                      </div>
+                      {criterion.focus && <p class="mt-1 text-sm text-navy-700">{criterion.focus}</p>}
+                    </li>
+                  ))}
+                </ul>
+                <p class="mt-2 flex justify-between border-t-2 border-navy-900 pt-4 font-bold">
+                  <span>{t('rules.total')}</span>
+                  <span>
+                    {total} {t('rules.points')}
+                  </span>
+                </p>
+              </section>
+            );
+          })}
+        </div>
+        {rules.rubrics.length > 1 && (
+          <p class="mt-6 font-semibold">
+            {t('rules.total')}: {grandTotal} {t('rules.points')}
+          </p>
+        )}
+      </Section>
+    )
+  }
+
+  {
+    rules.awards.length > 0 && (
+      <Section id="awards" title={t('rules.awards')}>
+        <ul class="grid gap-4 sm:grid-cols-3">
+          {rules.awards.map((award) => (
+            <li class="rounded-2xl border-t-4 border-gold-500 bg-white p-6 font-semibold shadow-sm">{award}</li>
+          ))}
+        </ul>
+      </Section>
+    )
+  }
+</BaseLayout>

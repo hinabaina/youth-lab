@@ -1,0 +1,29 @@
+---
+/**
+ * Админка для организаторов: https://<адрес сайта>/admin/
+ * Разделы и поля админки описаны в public/admin/config.yml.
+ * Сама админка (Sveltia CMS) копируется из node_modules скриптом scripts/copy-cms.mjs.
+ */
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>Youth Research Summit · админка</title>
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+  </head>
+  <body>
+    <script is:inline>
+      // Запускаем админку вручную, чтобы вход через GitHub шёл через этот же сайт (/api/auth)
+      // на любом адресе: основном домене, адресе *.pages.dev или превью ветки.
+      window.CMS_MANUAL_INIT = true;
+    </script>
+    <script is:inline src="/admin/sveltia-cms.js"></script>
+    <script is:inline>
+      window.CMS.init({ config: { backend: { base_url: window.location.origin } } });
+    </script>
+  </body>
+</html>
