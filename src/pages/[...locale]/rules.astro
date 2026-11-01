@@ -1,10 +1,15 @@
 ---
-/** Правила и оценка: формат, требования к исследовательской записке, критерии жюри, награды. */
+/**
+ * Правила и оценка: формат, требования к исследовательской записке, критерии жюри, награды.
+ * Страница длинная, поэтому сверху есть оглавление: на телефоне оно раскрывается по нажатию,
+ * на компьютере стоит сбоку и подсвечивает раздел, который сейчас на экране.
+ */
+import Icon from '../../components/Icon.astro';
 import Markdown from '../../components/Markdown.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import Section from '../../components/Section.astro';
 import { getLang, localeStaticPaths } from '../../i18n/routing';
-import { useTranslations } from '../../i18n/ui';
+import { plural, useTranslations } from '../../i18n/ui';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getRules } from '../../lib/content';
 
@@ -19,17 +24,27 @@ const grandTotal = rules.rubrics.reduce(
   (sum, rubric) => sum + rubric.criteria.reduce((part, criterion) => part + criterion.max, 0),
   0,
 );
+
+const toc = [
+  ...rules.sections.map((section, index) => ({ id: `rules-${index}`, label: section.title })),
+  ...(rules.rubrics.length > 0 ? [{ id: 'rubrics', label: t('rules.rubrics') }] : []),
+  ...(rules.awards.length > 0 ? [{ id: 'awards', label: t('rules.awards') }] : []),
+];
+const linkClass =
+  'flex gap-3 rounded-lg px-3 py-2 text-sm leading-snug text-navy-700 transition-colors hover:bg-cream-100 hover:text-navy-900 aria-[current=true]:bg-navy-900 aria-[current=true]:font-semibold aria-[current=true]:text-cream-50';
 ---
 
 <BaseLayout lang={lang} page="rules" title={t('rules.title')}>
   <PageHeader title={t('rules.title')}>
+    {rules.intro && <Markdown source={rules.intro} class="mt-5 max-w-3xl text-lg text-cream-200" />}
     {
       rules.document && (
         <a
           href={rules.document}
-          class="mt-6 inline-flex items-center gap-2 rounded-full bg-gold-500 px-6 py-3 font-display font-bold text-navy-950 hover:bg-gold-400"
+          class="mt-8 inline-flex items-center gap-2 rounded-full bg-gold-500 px-6 py-3 font-display font-bold text-navy-950 transition hover:-translate-y-0.5 hover:bg-gold-400"
           download
         >
+          <Icon name="file-text" class="size-5" />
           {t('rules.document')}
         </a>
       )
@@ -37,25 +52,67 @@ const grandTotal = rules.rubrics.reduce(
   </PageHeader>
 
   <Section>
-    <div class="max-w-3xl space-y-12">
-      {rules.intro && <Markdown source={rules.intro} class="text-lg" />}
-
+    <div class="grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[minmax(0,1fr)_17rem] lg:gap-16">
       {
-        rules.sections.map((section, index) => (
-          <section aria-labelledby={`rules-${index}`}>
-            <h2 id={`rules-${index}`} class="text-2xl font-bold">
-              {section.title}
-            </h2>
-            <Markdown source={section.body} class="mt-4" />
-          </section>
-        ))
+        toc.length > 1 && (
+          <>
+            <details class="group rounded-2xl bg-white ring-1 ring-cream-200 lg:hidden">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 font-display font-bold text-navy-900 [&::-webkit-details-marker]:hidden">
+                {t('rules.toc')}
+                <Icon name="chevron-down" class="size-5 text-navy-700 transition-transform group-open:rotate-180" />
+              </summary>
+              <ol class="space-y-0.5 px-2 pb-3">
+                {toc.map((item, index) => (
+                  <li>
+                    <a href={`#${item.id}`} class={linkClass}>
+                      <span class="w-5 shrink-0 font-display font-bold text-gold-600 tabular-nums">{index + 1}</span>
+                      {item.label}
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </details>
+
+            <nav aria-label={t('rules.toc')} class="hidden lg:order-last lg:block">
+              <div class="sticky top-24">
+                <p class="eyebrow text-gold-700">{t('rules.toc')}</p>
+                <ol class="mt-4 space-y-0.5" data-toc>
+                  {toc.map((item, index) => (
+                    <li>
+                      <a href={`#${item.id}`} class={linkClass}>
+                        <span class="w-5 shrink-0 font-display font-bold text-gold-600 tabular-nums">{index + 1}</span>
+                        {item.label}
+                      </a>
+                    </li>
+                  ))}
+                </ol>
+              </div>
+            </nav>
+          </>
+        )
       }
+
+      <div class="max-w-3xl space-y-14">
+        {
+          rules.sections.map((section, index) => (
+            <section aria-labelledby={`rules-${index}`} data-toc-target={`rules-${index}`}>
+              <h2 id={`rules-${index}`} class="flex scroll-mt-24 items-baseline gap-3 text-2xl font-bold sm:text-3xl">
+                <span class="font-display text-base font-extrabold text-gold-600 tabular-nums" aria-hidden="true">
+                  {String(index + 1).padStart(2, '0')}
+                </span>
+                {section.title}
+              </h2>
+              <Markdown source={section.body} class="mt-5" />
+            </section>
+          ))
+        }
+      </div>
     </div>
   </Section>
 
   {
     rules.rubrics.length > 0 && (
-      <Section id="rubrics" title={t('rules.rubrics')} tone="cream">
+      <Section id="rubrics" title={t('rules.rubrics')} tone="cream" data-toc-target="rubrics">
         <div class="grid gap-6 lg:grid-cols-2">
           {rules.rubrics.map((rubric) => {
             const total = rubric.criteria.reduce((sum, criterion) => sum + criterion.max, 0);
@@ -68,7 +125,7 @@ const grandTotal = rules.rubrics.reduce(
                       <div class="flex items-baseline justify-between gap-4">
                         <p class="font-semibold">{criterion.name}</p>
                         <p class="shrink-0 font-display font-bold whitespace-nowrap text-gold-700">
-                          {criterion.max} <span class="sr-only">{t('rules.points')}</span>
+                          {criterion.max} <span class="sr-only">{plural(lang, criterion.max, 'points')}</span>
                         </p>
                       </div>
                       {criterion.focus && <p class="mt-1 text-sm text-navy-700">{criterion.focus}</p>}
@@ -78,7 +135,7 @@ const grandTotal = rules.rubrics.reduce(
                 <p class="mt-2 flex justify-between border-t-2 border-navy-900 pt-4 font-bold">
                   <span>{t('rules.total')}</span>
                   <span>
-                    {total} {t('rules.points')}
+                    {total} {plural(lang, total, 'points')}
                   </span>
                 </p>
               </section>
@@ -86,8 +143,11 @@ const grandTotal = rules.rubrics.reduce(
           })}
         </div>
         {rules.rubrics.length > 1 && (
-          <p class="mt-6 font-semibold">
-            {t('rules.total')}: {grandTotal} {t('rules.points')}
+          <p class="mt-6 flex items-center justify-between gap-4 rounded-2xl bg-navy-900 px-6 py-5 text-cream-50 sm:px-8">
+            <span class="font-display text-lg font-bold">{t('rules.total')}</span>
+            <span class="font-display text-2xl font-extrabold text-gold-400">
+              {grandTotal} {plural(lang, grandTotal, 'points')}
+            </span>
           </p>
         )}
       </Section>
@@ -96,13 +156,53 @@ const grandTotal = rules.rubrics.reduce(
 
   {
     rules.awards.length > 0 && (
-      <Section id="awards" title={t('rules.awards')}>
-        <ul class="grid gap-4 sm:grid-cols-3">
-          {rules.awards.map((award) => (
-            <li class="rounded-2xl border-t-4 border-gold-500 bg-white p-6 font-semibold shadow-sm">{award}</li>
+      <Section id="awards" title={t('rules.awards')} data-toc-target="awards">
+        <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {rules.awards.map((award, index) => (
+            <li
+              class="flex items-start gap-4 rounded-3xl bg-white p-6 font-semibold ring-1 ring-cream-200"
+              data-reveal
+              style={`--reveal-delay: ${index * 100}ms`}
+            >
+              <span class="flex size-11 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-gold-300 to-gold-600 text-navy-950">
+                <Icon name="trophy" class="size-5" />
+              </span>
+              <span class="min-w-0 pt-2.5 break-words">{award}</span>
+            </li>
           ))}
         </ul>
       </Section>
     )
   }
 </BaseLayout>
+
+<script>
+  // Оглавление на компьютере: подсвечиваем раздел, который сейчас в верхней части экрана.
+  const links = new Map(
+    [...document.querySelectorAll<HTMLAnchorElement>('[data-toc] a')].map((link) => [link.hash.slice(1), link]),
+  );
+  const targets = [...document.querySelectorAll<HTMLElement>('[data-toc-target]')];
+
+  if (links.size > 0 && targets.length > 0 && 'IntersectionObserver' in window) {
+    const visible = new Set<string>();
+    const update = () => {
+      const current = targets.find((target) => visible.has(target.dataset.tocTarget ?? ''));
+      for (const [id, link] of links) {
+        if (current && id === current.dataset.tocTarget) link.setAttribute('aria-current', 'true');
+        else link.removeAttribute('aria-current');
+      }
+    };
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const id = (entry.target as HTMLElement).dataset.tocTarget ?? '';
+          if (entry.isIntersecting) visible.add(id);
+          else visible.delete(id);
+        }
+        update();
+      },
+      { rootMargin: '-15% 0px -60% 0px' },
+    );
+    targets.forEach((target) => observer.observe(target));
+  }
+</script>

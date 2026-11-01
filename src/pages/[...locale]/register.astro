@@ -1,5 +1,8 @@
 ---
-/** Регистрация: статус и ссылка на форму, условия участия, оплата, контакты для вопросов. */
+/** Регистрация: статус и ссылка на форму, шаги участия, условия, вопросы и ответы, контакты. */
+import Faq from '../../components/Faq.astro';
+import Icon from '../../components/Icon.astro';
+import Journey from '../../components/Journey.astro';
 import Markdown from '../../components/Markdown.astro';
 import PageHeader from '../../components/PageHeader.astro';
 import RegistrationCta from '../../components/RegistrationCta.astro';
@@ -7,7 +10,7 @@ import Section from '../../components/Section.astro';
 import { getLang, localeStaticPaths } from '../../i18n/routing';
 import { useTranslations } from '../../i18n/ui';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getEvent, getRegistration } from '../../lib/content';
+import { getEvent, getHome, getRegistration } from '../../lib/content';
 import {
   formatDate,
   formatNumber,
@@ -25,16 +28,28 @@ export function getStaticPaths() {
 
 const lang = getLang(Astro.params.locale);
 const t = useTranslations(lang);
-const [event, registration] = await Promise.all([getEvent(lang), getRegistration(lang)]);
+const [event, registration, home] = await Promise.all([getEvent(lang), getRegistration(lang), getHome(lang)]);
 
 const time = event.timeStart
   ? [event.timeStart, event.timeEnd].filter(Boolean).join('–')
   : t('event.timeTba');
 const fee = event.fee > 0 ? `${formatNumber(event.fee, lang)} ${t('event.feeUnit')}` : t('event.free');
 const place = [event.venue, event.address, event.city].filter(Boolean).join(', ');
+const facts = [
+  {
+    icon: 'calendar-days' as const,
+    label: t('event.date'),
+    value: `${formatDate(event.date, lang)}, ${formatWeekday(event.date, lang)}`,
+    note: time,
+  },
+  { icon: 'map-pin' as const, label: t('event.venue'), value: place, note: '' },
+  { icon: 'school' as const, label: t('event.audience'), value: event.audience, note: '' },
+  { icon: 'users' as const, label: t('event.team'), value: event.teamSize, note: '' },
+  { icon: 'ticket' as const, label: t('event.fee'), value: fee, note: event.feeNote || t('register.payment') },
+].filter((fact) => fact.value);
 ---
 
-<BaseLayout lang={lang} page="register" title={t('register.title')}>
+<BaseLayout lang={lang} page="register" title={t('register.title')} stickyCta={false}>
   <PageHeader title={t('register.title')}>
     <div class="mt-8">
       <RegistrationCta lang={lang} registration={registration} tone="dark" />
@@ -42,80 +57,83 @@ const place = [event.venue, event.address, event.city].filter(Boolean).join(', '
   </PageHeader>
 
   <Section>
-    <div class="grid gap-12 lg:grid-cols-[minmax(0,1fr)_22rem]">
+    <div class="grid gap-12 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-16">
       <div>
-        <h2 class="text-2xl font-bold">{t('register.howTo')}</h2>
-        <Markdown source={registration.body} class="mt-4" />
+        <p class="eyebrow text-gold-700">{t('home.steps.eyebrow')}</p>
+        <h2 class="mt-4 text-3xl font-extrabold tracking-tight sm:text-4xl">{t('register.howTo')}</h2>
+        {home.steps.length > 0 && <Journey lang={lang} steps={home.steps} class="mt-10" />}
+        {
+          registration.body && (
+            <div class="mt-12 rounded-3xl bg-cream-100 p-6 ring-1 ring-cream-200 sm:p-8" data-reveal>
+              <Markdown source={registration.body} />
+            </div>
+          )
+        }
       </div>
 
-      <aside class="h-fit rounded-2xl border border-cream-200 bg-white p-6">
+      <aside class="h-fit rounded-3xl bg-white p-6 ring-1 ring-cream-200 lg:sticky lg:top-24" data-reveal>
         <dl class="space-y-5">
-          <div>
-            <dt class="text-sm text-navy-700">{t('event.date')}</dt>
-            <dd class="font-semibold">
-              <time datetime={isoDate(event.date)}>{formatDate(event.date, lang)}</time>, {formatWeekday(event.date, lang)}
-            </dd>
-            <dd class="text-sm text-navy-700">{time}</dd>
-          </div>
-          <div>
-            <dt class="text-sm text-navy-700">{t('event.venue')}</dt>
-            <dd class="font-semibold">{place}</dd>
-          </div>
           {
-            event.audience && (
+            facts.map((fact) => (
               <div>
-                <dt class="text-sm text-navy-700">{t('event.audience')}</dt>
-                <dd class="font-semibold">{event.audience}</dd>
+                <dt class="flex items-center gap-3 text-sm text-navy-700">
+                  <span class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-gold-100 text-gold-700">
+                    <Icon name={fact.icon} class="size-4" />
+                  </span>
+                  {fact.label}
+                </dt>
+                <dd class="mt-1 pl-11 font-semibold">
+                  {fact.icon === 'calendar-days' ? <time datetime={isoDate(event.date)}>{fact.value}</time> : fact.value}
+                </dd>
+                {fact.note && <dd class="mt-0.5 pl-11 text-sm text-navy-700">{fact.note}</dd>}
               </div>
-            )
+            ))
           }
-          {
-            event.teamSize && (
-              <div>
-                <dt class="text-sm text-navy-700">{t('event.team')}</dt>
-                <dd class="font-semibold">{event.teamSize}</dd>
-              </div>
-            )
-          }
-          <div>
-            <dt class="text-sm text-navy-700">{t('event.fee')}</dt>
-            <dd class="font-semibold">{fee}</dd>
-            <dd class="mt-1 text-sm text-navy-700">{event.feeNote || t('register.payment')}</dd>
-          </div>
         </dl>
       </aside>
     </div>
   </Section>
 
   {
+    home.faq.length > 0 && (
+      <Section id="faq" tone="cream" eyebrow={t('home.faq.eyebrow')} title={t('home.faq.title')} center>
+        <Faq items={home.faq} />
+      </Section>
+    )
+  }
+
+  {
     (event.phone || event.instagram) && (
-      <Section tone="cream">
-        <p class="text-lg font-semibold">{t('contacts.questions')}</p>
-        <ul class="mt-4 flex flex-wrap gap-3">
-          {event.phone && (
-            <li>
-              <a
-                href={phoneHref(event.phone)}
-                class="inline-flex rounded-full border border-navy-900 px-5 py-2.5 font-semibold hover:bg-navy-900 hover:text-cream-50"
-              >
-                {formatPhone(event.phone)}
-              </a>
-            </li>
-          )}
-          {event.instagram && (
-            <li>
-              <a
-                href={instagramUrl(event.instagram)}
-                target="_blank"
-                rel="noopener"
-                class="inline-flex rounded-full border border-navy-900 px-5 py-2.5 font-semibold hover:bg-navy-900 hover:text-cream-50"
-              >
-                Instagram @{instagramHandle(event.instagram)}
-                <span class="sr-only"> ({t('a11y.newTab')})</span>
-              </a>
-            </li>
-          )}
-        </ul>
+      <Section>
+        <div class="flex flex-col gap-6 rounded-3xl bg-navy-950 p-6 text-cream-100 sm:p-10 lg:flex-row lg:items-center lg:justify-between">
+          <p class="max-w-md font-display text-xl font-bold text-cream-50 sm:text-2xl">{t('contacts.questions')}</p>
+          <ul class="flex flex-wrap gap-3">
+            {event.instagram && (
+              <li>
+                <a
+                  href={instagramUrl(event.instagram)}
+                  target="_blank"
+                  rel="noopener"
+                  class="inline-flex items-center gap-2 rounded-full bg-gold-500 px-5 py-3 font-semibold text-navy-950 transition hover:bg-gold-400"
+                >
+                  <Icon name="instagram" class="size-4" />@{instagramHandle(event.instagram)}
+                  <span class="sr-only"> ({t('a11y.newTab')})</span>
+                </a>
+              </li>
+            )}
+            {event.phone && (
+              <li>
+                <a
+                  href={phoneHref(event.phone)}
+                  class="inline-flex items-center gap-2 rounded-full px-5 py-3 font-semibold text-cream-50 ring-1 ring-white/25 transition hover:bg-white/10"
+                >
+                  <Icon name="phone" class="size-4" />
+                  {formatPhone(event.phone)}
+                </a>
+              </li>
+            )}
+          </ul>
+        </div>
       </Section>
     )
   }

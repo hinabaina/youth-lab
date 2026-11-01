@@ -1,6 +1,7 @@
 ru:
   order: 2
   title: Окружающая среда и экология
+  icon: leaf
   topics:
     - климат
     - отходы

@@ -1,0 +1,72 @@
+---
+/**
+ * «Как принять участие»: шаги от сбора команды до итогов.
+ * Золотая линия слева заполняется по мере прокрутки, пройденные шаги подсвечиваются.
+ */
+import { useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  steps: { title: string; text: string }[];
+  class?: string;
+}
+
+const { lang, steps, class: className } = Astro.props;
+const t = useTranslations(lang);
+---
+
+<ol class:list={['relative', className]} data-journey>
+  <span aria-hidden="true" class="absolute top-6 bottom-6 left-[1.375rem] w-0.5 -translate-x-1/2 rounded-full bg-navy-100">
+  </span>
+  <span
+    aria-hidden="true"
+    class="absolute top-6 bottom-6 left-[1.375rem] w-0.5 origin-top -translate-x-1/2 scale-y-[var(--progress,0)] rounded-full bg-linear-to-b from-gold-400 to-gold-600"
+    data-journey-line
+  >
+  </span>
+  {
+    steps.map((step, index) => (
+      <li class="group relative pb-10 pl-16 last:pb-0" data-journey-step data-reveal>
+        <span class="absolute top-0 left-0 flex size-11 items-center justify-center rounded-full border-2 border-navy-100 bg-white font-display text-lg font-extrabold text-navy-800 transition-colors duration-500 group-data-[active]:border-gold-500 group-data-[active]:bg-gold-500 group-data-[active]:text-navy-950">
+          {index + 1}
+        </span>
+        <p class="pt-0.5 text-xs font-bold tracking-[0.18em] text-gold-700 uppercase">
+          {t('step.label', { n: String(index + 1) })}
+        </p>
+        <h3 class="mt-1 text-xl font-bold sm:text-2xl">{step.title}</h3>
+        {step.text && <p class="mt-2 max-w-xl text-navy-700">{step.text}</p>}
+      </li>
+    ))
+  }
+</ol>
+
+<script>
+  const lists = document.querySelectorAll<HTMLElement>('[data-journey]');
+
+  const update = () => {
+    const mark = window.innerHeight * 0.6;
+    for (const list of lists) {
+      const rect = list.getBoundingClientRect();
+      const progress = Math.min(1, Math.max(0, (mark - rect.top) / rect.height));
+      list.style.setProperty('--progress', progress.toFixed(3));
+      for (const step of list.querySelectorAll<HTMLElement>('[data-journey-step]')) {
+        step.toggleAttribute('data-active', step.getBoundingClientRect().top < mark);
+      }
+    }
+  };
+
+  if (lists.length > 0) {
+    let ticking = false;
+    const schedule = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        update();
+        ticking = false;
+      });
+    };
+    window.addEventListener('scroll', schedule, { passive: true });
+    window.addEventListener('resize', schedule);
+    update();
+  }
+</script>

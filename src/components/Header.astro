@@ -1,10 +1,12 @@
 ---
 /**
  * Шапка: сова и название, меню, переключатель языка.
- * На телефоне меню прячется под кнопку «Меню» (работает без JavaScript).
+ * Прилипает к верху экрана; при прокрутке вниз уезжает, при прокрутке вверх возвращается.
+ * На телефоне меню прячется под кнопку «Меню» (открывается и без JavaScript).
  */
 import { localizePath, PAGES, type PageKey } from '../i18n/routing';
 import { useTranslations, type Lang } from '../i18n/ui';
+import Icon from './Icon.astro';
 import LanguageSwitcher from './LanguageSwitcher.astro';
 
 interface Props {
@@ -24,10 +26,19 @@ const items = (['committees', 'rules', 'register', 'results'] as const)
 const mobileItems = [{ key: 'home' as const, href: localizePath('/', lang), label: t('nav.home') }, ...items];
 ---
 
-<header class="relative bg-navy-900 text-cream-100">
-  <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6 lg:px-8">
-    <a href={localizePath('/', lang)} class="flex items-center gap-3 rounded-md">
-      <img src="/brand/owl-cream.png" alt="" width="40" height="45" class="h-10 w-auto" />
+<header
+  data-header
+  class="sticky top-0 z-50 border-b border-transparent bg-navy-950 text-cream-100 transition-[translate,border-color,box-shadow] duration-300 data-[hidden]:-translate-y-full data-[scrolled]:border-white/10 data-[scrolled]:shadow-lg data-[scrolled]:shadow-navy-950/20"
+>
+  <div class="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-2.5 sm:px-6 lg:px-8">
+    <a href={localizePath('/', lang)} class="group flex items-center gap-3 rounded-md">
+      <img
+        src="/brand/owl-cream.png"
+        alt=""
+        width="36"
+        height="41"
+        class="h-10 w-auto transition-transform duration-300 group-hover:-rotate-6"
+      />
       <span class="font-display text-base leading-tight font-bold tracking-tight sm:text-lg">{siteName}</span>
     </a>
 
@@ -40,7 +51,7 @@ const mobileItems = [{ key: 'home' as const, href: localizePath('/', lang), labe
                 <a
                   href={href}
                   aria-current={page === key ? 'page' : undefined}
-                  class="rounded-full px-3 py-2 text-sm font-medium hover:bg-navy-800 aria-[current=page]:text-gold-400"
+                  class="rounded-full px-3.5 py-2 text-sm font-medium text-cream-100/90 transition-colors hover:bg-white/10 hover:text-cream-50 aria-[current=page]:bg-white/10 aria-[current=page]:text-gold-300"
                 >
                   {label}
                 </a>
@@ -52,17 +63,16 @@ const mobileItems = [{ key: 'home' as const, href: localizePath('/', lang), labe
       <LanguageSwitcher lang={lang} page={page} />
     </div>
 
-    <details class="group lg:hidden">
+    <details class="group lg:hidden" data-menu>
       <summary
-        class="flex cursor-pointer list-none items-center gap-2 rounded-full border border-navy-700 px-4 py-2 text-sm font-semibold [&::-webkit-details-marker]:hidden"
+        class="flex cursor-pointer list-none items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-sm font-semibold ring-1 ring-white/15 transition-colors hover:bg-white/15 [&::-webkit-details-marker]:hidden"
       >
+        <Icon name="menu" class="size-4 group-open:hidden" />
+        <Icon name="x" class="hidden size-4 group-open:block" />
         {t('nav.menu')}
-        <svg aria-hidden="true" viewBox="0 0 20 20" class="size-4 transition-transform group-open:rotate-180">
-          <path d="M5 7.5 10 12.5 15 7.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-        </svg>
       </summary>
       <div
-        class="absolute inset-x-0 z-40 mt-3 border-t border-navy-800 bg-navy-900 px-4 pt-2 pb-5 shadow-xl sm:px-6"
+        class="absolute inset-x-0 top-full border-t border-white/10 bg-navy-950 px-4 pt-3 pb-6 shadow-2xl shadow-navy-950/50 sm:px-6"
       >
         <nav aria-label={t('nav.label')}>
           <ul class="flex flex-col">
@@ -72,17 +82,66 @@ const mobileItems = [{ key: 'home' as const, href: localizePath('/', lang), labe
                   <a
                     href={href}
                     aria-current={page === key ? 'page' : undefined}
-                    class="block rounded-lg px-3 py-3 text-base font-medium hover:bg-navy-800 aria-[current=page]:text-gold-400"
+                    class="flex items-center justify-between rounded-xl px-3 py-3.5 font-display text-lg font-semibold transition-colors hover:bg-white/5 aria-[current=page]:text-gold-300"
                   >
                     {label}
+                    <Icon name="arrow-right" class="size-4 text-cream-100/40" />
                   </a>
                 </li>
               ))
             }
           </ul>
         </nav>
-        <LanguageSwitcher lang={lang} page={page} class="mt-3 px-1" />
+        <LanguageSwitcher lang={lang} page={page} class="mt-4 px-2" />
       </div>
     </details>
   </div>
 </header>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-header]');
+  const menu = document.querySelector<HTMLDetailsElement>('[data-menu]');
+
+  if (header) {
+    let lastY = window.scrollY;
+    let ticking = false;
+
+    const update = () => {
+      const y = window.scrollY;
+      header.toggleAttribute('data-scrolled', y > 8);
+      // Прячем шапку только при заметной прокрутке вниз и когда меню закрыто.
+      if (y > lastY + 4 && y > 240 && !menu?.open) header.setAttribute('data-hidden', '');
+      else if (y < lastY - 4 || y <= 240) header.removeAttribute('data-hidden');
+      lastY = y;
+      ticking = false;
+    };
+
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(update);
+        }
+      },
+      { passive: true },
+    );
+    update();
+  }
+
+  if (menu) {
+    // Меню закрывается после выбора пункта, по Escape и по нажатию мимо него.
+    menu.addEventListener('click', (event) => {
+      if ((event.target as HTMLElement).closest('a')) menu.open = false;
+    });
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && menu.open) {
+        menu.open = false;
+        menu.querySelector('summary')?.focus();
+      }
+    });
+    document.addEventListener('click', (event) => {
+      if (menu.open && !menu.contains(event.target as Node)) menu.open = false;
+    });
+  }
+</script>

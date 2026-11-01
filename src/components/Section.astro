@@ -1,26 +1,64 @@
 ---
-/** Блок страницы с заголовком h2. */
+/** Блок страницы: надзаголовок, заголовок h2, подводка (строкой или слотом lead) и содержимое. */
+import HeroBackdrop from './HeroBackdrop.astro';
+
 interface Props {
   id?: string;
+  /** Короткое слово над заголовком, например «Формат». */
+  eyebrow?: string;
   title?: string;
-  tone?: 'white' | 'cream';
+  lead?: string;
+  tone?: 'white' | 'cream' | 'navy';
+  /** Заголовок по центру (для коротких блоков). */
+  center?: boolean;
   class?: string;
+  /** Атрибуты data-* передаются тегу <section> как есть. */
+  [key: `data-${string}`]: string | undefined;
 }
 
-const { id, title, tone = 'white', class: className } = Astro.props;
+const { id, eyebrow, title, lead, tone = 'white', center = false, class: className, ...rest } = Astro.props;
+const dark = tone === 'navy';
+const hasLeadSlot = Astro.slots.has('lead');
+const hasHeading = Boolean(eyebrow || title || lead || hasLeadSlot);
 ---
 
 <section
   id={id}
   aria-labelledby={id && title ? `${id}-title` : undefined}
-  class:list={[tone === 'cream' ? 'bg-cream-100' : 'bg-cream-50', 'py-14 sm:py-20', className]}
+  {...rest}
+  class:list={[
+    'relative isolate scroll-mt-4 py-16 sm:py-24',
+    tone === 'white' && 'bg-cream-50',
+    tone === 'cream' && 'bg-cream-100',
+    dark && 'overflow-hidden bg-navy-950 text-cream-100',
+    className,
+  ]}
 >
+  {dark && <HeroBackdrop />}
   <div class="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
     {
-      title && (
-        <h2 id={id ? `${id}-title` : undefined} class="mb-8 text-2xl font-bold sm:text-3xl">
-          {title}
-        </h2>
+      hasHeading && (
+        <header class:list={['mb-10 max-w-3xl sm:mb-14', center && 'mx-auto text-center']} data-reveal>
+          {eyebrow && <p class:list={['eyebrow', dark ? 'text-gold-400' : 'text-gold-700']}>{eyebrow}</p>}
+          {title && (
+            <h2
+              id={id ? `${id}-title` : undefined}
+              class:list={[
+                'text-3xl leading-tight font-extrabold tracking-tight sm:text-4xl',
+                eyebrow && 'mt-4',
+                dark && 'text-cream-50',
+              ]}
+            >
+              {title}
+            </h2>
+          )}
+          {lead && <p class:list={['mt-4 text-lg', dark ? 'text-cream-200' : 'text-navy-700']}>{lead}</p>}
+          {hasLeadSlot && (
+            <div class:list={['mt-4 text-lg', dark ? 'text-cream-200' : 'text-navy-700']}>
+              <slot name="lead" />
+            </div>
+          )}
+        </header>
       )
     }
     <slot />

@@ -1,17 +1,22 @@
 ---
-/** Заголовок внутренней страницы на тёмно-синем фоне. */
+/** Заголовок внутренней страницы: тёмно-синий блок в стиле первого экрана главной. */
+import HeroBackdrop from './HeroBackdrop.astro';
+
 interface Props {
   title: string;
   lead?: string;
+  eyebrow?: string;
 }
 
-const { title, lead } = Astro.props;
+const { title, lead, eyebrow } = Astro.props;
 ---
 
-<div class="bg-navy-900 text-cream-100">
-  <div class="mx-auto max-w-6xl px-4 pt-10 pb-12 sm:px-6 sm:pt-14 sm:pb-16 lg:px-8">
-    <h1 class="text-3xl font-bold text-cream-50 sm:text-4xl">{title}</h1>
-    {lead && <p class="mt-4 max-w-3xl text-lg text-cream-200">{lead}</p>}
+<div class="relative isolate overflow-hidden bg-navy-950 text-cream-100" data-hero>
+  <HeroBackdrop />
+  <div class="mx-auto max-w-6xl px-4 pt-10 pb-14 sm:px-6 sm:pt-16 sm:pb-20 lg:px-8">
+    {eyebrow && <p class="eyebrow text-gold-400">{eyebrow}</p>}
+    <h1 class:list={['text-4xl font-extrabold tracking-tight text-cream-50 sm:text-5xl', eyebrow && 'mt-4']}>{title}</h1>
+    {lead && <p class="mt-5 max-w-3xl text-lg text-cream-200">{lead}</p>}
     <slot />
   </div>
 </div>

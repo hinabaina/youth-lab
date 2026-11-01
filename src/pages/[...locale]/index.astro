@@ -1,9 +1,29 @@
 ---
-/** Главная: всё главное о саммите на одной странице — для тех, кто пришёл по ссылке из Instagram. */
-import Markdown from '../../components/Markdown.astro';
+/**
+ * Главная — путь посетителя, который пришёл по ссылке из Instagram и ещё не знает, что это:
+ * 1. Первый экран: что это, когда и где, сколько осталось, что нажать.
+ * 2. Формат: зачем саммит и три этапа дня.
+ * 3. Как принять участие: шаги от команды до итогов.
+ * 4. Комитеты: выбор направления.
+ * 5. Программа дня.
+ * 6. Как оценивает жюри.
+ * 7. Что получат участники.
+ * 8. Жюри и партнёры — когда появятся в админке.
+ * 9. Вопросы и ответы.
+ * 10. Финальный призыв и контакты.
+ */
+import Faq from '../../components/Faq.astro';
+import Journey from '../../components/Journey.astro';
+import ProgramTimeline from '../../components/ProgramTimeline.astro';
 import RegistrationCta from '../../components/RegistrationCta.astro';
 import Section from '../../components/Section.astro';
-import { getLang, localeStaticPaths, localizePath, PAGES } from '../../i18n/routing';
+import Benefits from '../../components/home/Benefits.astro';
+import CommitteePicker from '../../components/home/CommitteePicker.astro';
+import FinalCta from '../../components/home/FinalCta.astro';
+import Format from '../../components/home/Format.astro';
+import Hero from '../../components/home/Hero.astro';
+import Scoring from '../../components/home/Scoring.astro';
+import { getLang, localeStaticPaths } from '../../i18n/routing';
 import { useTranslations } from '../../i18n/ui';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import {
@@ -14,17 +34,9 @@ import {
   getPartners,
   getProgram,
   getRegistration,
+  getRules,
 } from '../../lib/content';
-import {
-  formatDate,
-  formatNumber,
-  formatPhone,
-  formatWeekday,
-  instagramHandle,
-  instagramUrl,
-  isoDate,
-  phoneHref,
-} from '../../lib/format';
+import { formatDate, formatNumber, isoDate } from '../../lib/format';
 
 export function getStaticPaths() {
   return localeStaticPaths();
@@ -33,7 +45,7 @@ export function getStaticPaths() {
 const lang = getLang(Astro.params.locale);
 const t = useTranslations(lang);
 
-const [event, registration, home, program, committees, jury, partners] = await Promise.all([
+const [event, registration, home, program, committees, jury, partners, rules] = await Promise.all([
   getEvent(lang),
   getRegistration(lang),
   getHome(lang),
@@ -41,13 +53,14 @@ const [event, registration, home, program, committees, jury, partners] = await P
   getCommittees(lang),
   getJury(lang),
   getPartners(),
+  getRules(lang),
 ]);
 
-const time = event.timeStart
-  ? [event.timeStart, event.timeEnd].filter(Boolean).join('–')
-  : t('event.timeTba');
-const place = [event.venue, event.city].filter(Boolean).join(', ');
 const fee = event.fee > 0 ? `${formatNumber(event.fee, lang)} ${t('event.feeUnit')}` : t('event.free');
+
+// Светлые блоки чередуются: кремовый — белый. Жюри и партнёры появляются, только когда их добавят в админке.
+const partnersTone = jury.length > 0 ? 'cream' : 'white';
+const faqTone = partners.length > 0 && partnersTone === 'cream' ? 'white' : 'cream';
 
 // Данные для поисковиков (Google показывает такие события с датой и местом).
 const eventJsonLd = {
@@ -85,197 +98,113 @@ const eventJsonLd = {
 <BaseLayout lang={lang} page="home">
   <script slot="head" type="application/ld+json" set:html={JSON.stringify(eventJsonLd)} />
 
-  <div class="overflow-hidden bg-navy-900 text-cream-100">
-    <div class="mx-auto grid max-w-6xl items-center gap-10 px-4 pt-10 pb-16 sm:px-6 sm:pt-16 sm:pb-20 lg:grid-cols-[1fr_auto] lg:px-8">
-      <div>
-        <p class="font-display text-sm font-semibold tracking-[0.2em] text-gold-400 uppercase">
-          <time datetime={isoDate(event.date)}>{formatDate(event.date, lang)}</time>
-        </p>
-        <h1 class="mt-3 text-4xl leading-tight font-extrabold text-cream-50 sm:text-5xl lg:text-6xl">
-          {event.name}
-        </h1>
-        {event.tagline && <p class="mt-5 max-w-2xl text-lg text-cream-200 sm:text-xl">{event.tagline}</p>}
+  <Hero lang={lang} event={event} registration={registration} home={home} />
 
-        <dl class="mt-8 grid gap-4 sm:grid-cols-2 sm:gap-6">
-          <div class="border-l-2 border-gold-500 pl-4">
-            <dt class="text-sm text-cream-200">{t('event.date')}</dt>
-            <dd class="font-semibold text-cream-50">
-              {formatDate(event.date, lang)}, {formatWeekday(event.date, lang)}
-            </dd>
-            <dd class="text-sm text-cream-200">{time}</dd>
-          </div>
-          <div class="border-l-2 border-gold-500 pl-4">
-            <dt class="text-sm text-cream-200">{t('event.venue')}</dt>
-            <dd class="font-semibold text-cream-50">{place}</dd>
-            {event.address && <dd class="text-sm text-cream-200">{event.address}</dd>}
-          </div>
-        </dl>
+  <Format lang={lang} home={home} />
 
-        <div class="mt-9">
-          <RegistrationCta lang={lang} registration={registration} tone="dark" />
+  {
+    home.steps.length > 0 && (
+      <Section id="steps" tone="cream" eyebrow={t('home.steps.eyebrow')} title={t('home.steps.title')}>
+        <div class="grid gap-12 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-16">
+          <Journey lang={lang} steps={home.steps} />
+          <aside class="h-fit space-y-5 rounded-3xl bg-white p-6 ring-1 ring-cream-200 lg:sticky lg:top-24" data-reveal>
+            <RegistrationCta lang={lang} registration={registration} />
+            <dl class="space-y-4 border-t border-cream-200 pt-5 text-sm">
+              {event.audience && (
+                <div>
+                  <dt class="text-navy-700">{t('event.audience')}</dt>
+                  <dd class="mt-0.5 font-semibold">{event.audience}</dd>
+                </div>
+              )}
+              {event.teamSize && (
+                <div>
+                  <dt class="text-navy-700">{t('event.team')}</dt>
+                  <dd class="mt-0.5 font-semibold">{event.teamSize}</dd>
+                </div>
+              )}
+              <div>
+                <dt class="text-navy-700">{t('event.fee')}</dt>
+                <dd class="mt-0.5 font-semibold">{fee}</dd>
+                {event.feeNote && <dd class="mt-1 text-navy-700">{event.feeNote}</dd>}
+              </div>
+            </dl>
+          </aside>
         </div>
-      </div>
-
-      <img
-        src="/brand/logo-cream.png"
-        alt=""
-        width="640"
-        height="455"
-        class="mx-auto hidden w-72 opacity-95 lg:block xl:w-80"
-      />
-    </div>
-  </div>
-
-  {
-    home.facts.length > 0 && (
-      <div class="border-b border-cream-200 bg-cream-100">
-        <ul class="mx-auto grid max-w-6xl grid-cols-2 gap-x-6 gap-y-8 px-4 py-10 sm:px-6 md:grid-cols-4 lg:px-8">
-          {home.facts.map((fact) => (
-            <li>
-              <p class="font-display text-4xl font-extrabold text-navy-900">{fact.value}</p>
-              <p class="mt-1 text-sm text-navy-700">{fact.label}</p>
-            </li>
-          ))}
-        </ul>
-      </div>
-    )
-  }
-
-  {
-    home.about && (
-      <Section id="about" title={t('home.about')}>
-        <Markdown source={home.about} class="max-w-3xl text-lg" />
       </Section>
     )
   }
 
   {
     committees.length > 0 && (
-      <Section id="committees" title={t('home.committees')} tone="cream">
-        <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {committees.map((committee, index) => (
-            <li class="rounded-2xl border border-cream-200 bg-white p-6">
-              <p class="font-display text-sm font-bold text-gold-700">{String(index + 1).padStart(2, '0')}</p>
-              <h3 class="mt-2 text-lg font-bold">
-                <a href={`${localizePath(PAGES.committees, lang)}#${committee.id}`} class="hover:underline">
-                  {committee.title}
-                </a>
-              </h3>
-              {committee.topics.length > 0 && (
-                <p class="mt-2 text-sm text-navy-700">{committee.topics.join(' · ')}</p>
-              )}
-            </li>
-          ))}
-        </ul>
-        <p class="mt-8">
-          <a
-            href={localizePath(PAGES.committees, lang)}
-            class="font-semibold text-navy-800 underline decoration-gold-500 decoration-2 underline-offset-4"
-          >
-            {t('home.committeesMore')}
-          </a>
-        </p>
+      <Section
+        id="committees"
+        eyebrow={t('home.committees.eyebrow')}
+        title={t('home.committees.title')}
+        lead={t('committees.lead')}
+      >
+        <CommitteePicker lang={lang} committees={committees} />
       </Section>
     )
   }
 
   {
     program.stages.length > 0 && (
-      <Section id="program" title={t('home.program')}>
-        {program.note && <p class="-mt-4 mb-8 text-navy-700">{program.note}</p>}
-        <ol class="relative max-w-3xl space-y-6 border-l-2 border-cream-200 pl-6">
-          {program.stages.map((stage) => (
-            <li class="relative">
-              <span
-                aria-hidden="true"
-                class="absolute top-1.5 -left-[31px] size-3 rounded-full border-2 border-cream-50 bg-gold-500"
-              />
-              {(stage.time || stage.duration) && (
-                <p class="text-sm font-semibold text-gold-700">
-                  {[stage.time, stage.duration].filter(Boolean).join(' · ')}
-                </p>
-              )}
-              <h3 class="text-lg font-bold">{stage.title}</h3>
-              {stage.description && <p class="mt-1 text-navy-700">{stage.description}</p>}
-            </li>
-          ))}
-        </ol>
+      <Section
+        id="program"
+        tone="cream"
+        eyebrow={`${t('home.program.eyebrow')} · ${formatDate(event.date, lang)}`}
+        title={t('home.program.title')}
+        lead={program.note}
+      >
+        <ProgramTimeline stages={program.stages} />
       </Section>
     )
   }
 
-  <Section id="participation" title={t('home.participation')} tone="cream">
-    <div class="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-start">
-      <dl class="grid gap-6 sm:grid-cols-3">
-        {
-          event.audience && (
-            <div>
-              <dt class="text-sm text-navy-700">{t('event.audience')}</dt>
-              <dd class="mt-1 font-semibold">{event.audience}</dd>
-            </div>
-          )
-        }
-        {
-          event.teamSize && (
-            <div>
-              <dt class="text-sm text-navy-700">{t('event.team')}</dt>
-              <dd class="mt-1 font-semibold">{event.teamSize}</dd>
-            </div>
-          )
-        }
-        <div>
-          <dt class="text-sm text-navy-700">{t('event.fee')}</dt>
-          <dd class="mt-1 font-semibold">{fee}</dd>
-          {event.feeNote && <dd class="mt-1 text-sm text-navy-700">{event.feeNote}</dd>}
-        </div>
-      </dl>
-      <div class="space-y-4">
-        <RegistrationCta lang={lang} registration={registration} showNote={false} />
-        <ul class="space-y-2 text-sm">
-          <li>
-            <a
-              href={localizePath(PAGES.register, lang)}
-              class="font-semibold text-navy-800 underline decoration-gold-500 decoration-2 underline-offset-4"
-            >
-              {t('home.registerMore')}
-            </a>
-          </li>
-          <li>
-            <a
-              href={localizePath(PAGES.rules, lang)}
-              class="font-semibold text-navy-800 underline decoration-gold-500 decoration-2 underline-offset-4"
-            >
-              {t('home.rulesMore')}
-            </a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </Section>
+  {
+    rules.rubrics.length > 0 && (
+      <Section
+        id="scoring"
+        eyebrow={t('home.scoring.eyebrow')}
+        title={t('home.scoring.title')}
+        lead={t('home.scoring.lead')}
+      >
+        <Scoring lang={lang} rubrics={rules.rubrics} />
+      </Section>
+    )
+  }
+
+  {
+    home.benefits.length > 0 && (
+      <Section id="benefits" tone="navy" eyebrow={t('home.benefits.eyebrow')} title={t('home.benefits.title')}>
+        <Benefits benefits={home.benefits} />
+      </Section>
+    )
+  }
 
   {
     jury.length > 0 && (
       <Section id="jury" title={t('home.jury')}>
         <ul class="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
-          {jury.map((member) => (
-            <li>
+          {jury.map((member, index) => (
+            <li data-reveal style={`--reveal-delay: ${(index % 4) * 80}ms`}>
               {member.photo ? (
                 <img
                   src={member.photo}
                   alt=""
                   loading="lazy"
-                  class="aspect-square w-full rounded-2xl bg-cream-200 object-cover"
+                  class="aspect-square w-full rounded-3xl bg-cream-200 object-cover"
                 />
               ) : (
                 <div
                   aria-hidden="true"
-                  class="flex aspect-square w-full items-center justify-center rounded-2xl bg-navy-100 font-display text-3xl font-bold text-navy-700"
+                  class="flex aspect-square w-full items-center justify-center rounded-3xl bg-navy-900 font-display text-4xl font-bold text-gold-400"
                 >
                   {member.name.charAt(0)}
                 </div>
               )}
-              <h3 class="mt-3 font-bold">{member.name}</h3>
-              {member.role && <p class="text-sm text-navy-700">{member.role}</p>}
+              <h3 class="mt-4 text-lg font-bold">{member.name}</h3>
+              {member.role && <p class="mt-1 text-sm text-navy-700">{member.role}</p>}
             </li>
           ))}
         </ul>
@@ -285,8 +214,8 @@ const eventJsonLd = {
 
   {
     partners.length > 0 && (
-      <Section id="partners" title={t('home.partners')} tone={jury.length > 0 ? 'cream' : 'white'}>
-        <ul class="flex flex-wrap items-center gap-x-10 gap-y-6">
+      <Section id="partners" title={t('home.partners')} tone={partnersTone}>
+        <ul class="flex flex-wrap items-center gap-x-10 gap-y-6" data-reveal>
           {partners.map((partner) => {
             const content = partner.logo ? (
               <img src={partner.logo} alt={partner.name} loading="lazy" class="h-14 w-auto max-w-[180px] object-contain" />
@@ -310,64 +239,19 @@ const eventJsonLd = {
     )
   }
 
-  <Section id="contacts" title={t('home.contacts')}>
-    <dl class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-      {
-        event.phone && (
-          <div>
-            <dt class="text-sm text-navy-700">{t('contacts.phone')}</dt>
-            <dd class="mt-1 font-semibold">
-              <a href={phoneHref(event.phone)} class="hover:underline">
-                {formatPhone(event.phone)}
-              </a>
-            </dd>
-          </div>
-        )
-      }
-      {
-        event.instagram && (
-          <div>
-            <dt class="text-sm text-navy-700">{t('contacts.instagram')}</dt>
-            <dd class="mt-1 font-semibold">
-              <a href={instagramUrl(event.instagram)} target="_blank" rel="noopener" class="hover:underline">
-                @{instagramHandle(event.instagram)}
-                <span class="sr-only"> ({t('a11y.newTab')})</span>
-              </a>
-            </dd>
-          </div>
-        )
-      }
-      {
-        event.email && (
-          <div>
-            <dt class="text-sm text-navy-700">{t('contacts.email')}</dt>
-            <dd class="mt-1 font-semibold">
-              <a href={`mailto:${event.email}`} class="hover:underline">
-                {event.email}
-              </a>
-            </dd>
-          </div>
-        )
-      }
-      <div>
-        <dt class="text-sm text-navy-700">{t('contacts.address')}</dt>
-        <dd class="mt-1 font-semibold">{[event.venue, event.address, event.city].filter(Boolean).join(', ')}</dd>
-        {
-          event.mapUrl && (
-            <dd class="mt-1 text-sm">
-              <a
-                href={event.mapUrl}
-                target="_blank"
-                rel="noopener"
-                class="text-navy-800 underline decoration-gold-500 underline-offset-4"
-              >
-                {t('event.map')}
-                <span class="sr-only"> ({t('a11y.newTab')})</span>
-              </a>
-            </dd>
-          )
-        }
-      </div>
-    </dl>
-  </Section>
+  {
+    home.faq.length > 0 && (
+      <Section
+        id="faq"
+        tone={faqTone}
+        eyebrow={t('home.faq.eyebrow')}
+        title={t('home.faq.title')}
+        center
+      >
+        <Faq items={home.faq} />
+      </Section>
+    )
+  }
+
+  <FinalCta lang={lang} event={event} registration={registration} />
 </BaseLayout>

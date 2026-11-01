@@ -1,0 +1,151 @@
+---
+/**
+ * Оценка: круговая диаграмма «100 баллов = записка + выступление» и критерии со шкалами.
+ * Данные — из раздела «Правила и оценка» в админке.
+ */
+import { localizePath, PAGES } from '../../i18n/routing';
+import { plural, useTranslations, type Lang } from '../../i18n/ui';
+import type { getRules } from '../../lib/content';
+import Icon from '../Icon.astro';
+
+interface Props {
+  lang: Lang;
+  rubrics: Awaited<ReturnType<typeof getRules>>['rubrics'];
+}
+
+const { lang, rubrics } = Astro.props;
+const t = useTranslations(lang);
+
+const parts = rubrics.map((rubric, index) => ({
+  ...rubric,
+  id: `rubric-${index}`,
+  total: rubric.criteria.reduce((sum, criterion) => sum + criterion.max, 0),
+}));
+const grandTotal = parts.reduce((sum, part) => sum + part.total, 0);
+const maxCriterion = Math.max(1, ...parts.flatMap((part) => part.criteria.map((criterion) => criterion.max)));
+
+// Круговая диаграмма: окружность r=52, сегменты по долям этапов, с небольшим зазором.
+const radius = 52;
+const circumference = 2 * Math.PI * radius;
+const gap = parts.length > 1 ? 2.5 : 0;
+const colors = ['stroke-gold-500', 'stroke-navy-800', 'stroke-gold-300', 'stroke-navy-300'];
+const dots = ['bg-gold-500', 'bg-navy-800', 'bg-gold-300', 'bg-navy-300'];
+let offset = 0;
+const segments = parts.map((part, index) => {
+  const length = grandTotal > 0 ? (part.total / grandTotal) * circumference : 0;
+  const segment = {
+    color: colors[index % colors.length],
+    dash: `${Math.max(0, length - gap)} ${circumference}`,
+    offset: -offset,
+  };
+  offset += length;
+  return segment;
+});
+---
+
+<div class="grid grid-cols-[minmax(0,1fr)] gap-10 lg:grid-cols-[18rem_minmax(0,1fr)] lg:gap-16">
+  <div class="mx-auto w-full max-w-[18rem]" data-reveal>
+    <div class="relative aspect-square">
+      <svg viewBox="0 0 120 120" class="size-full -rotate-90" aria-hidden="true">
+        <circle cx="60" cy="60" r={radius} fill="none" stroke-width="12" class="stroke-navy-50" />
+        {
+          segments.map((segment) => (
+            <circle
+              cx="60"
+              cy="60"
+              r={radius}
+              fill="none"
+              stroke-width="12"
+              stroke-linecap="butt"
+              stroke-dasharray={segment.dash}
+              stroke-dashoffset={segment.offset}
+              class={segment.color}
+            />
+          ))
+        }
+      </svg>
+      <div class="absolute inset-0 flex flex-col items-center justify-center text-center">
+        <span class="font-display text-6xl font-extrabold text-navy-900 tabular-nums" data-count={grandTotal}>
+          {grandTotal}
+        </span>
+        <span class="mt-1 text-sm font-semibold text-navy-700">{plural(lang, grandTotal, 'points')}</span>
+      </div>
+    </div>
+    <ul class="mt-8 space-y-3">
+      {
+        parts.map((part, index) => (
+          <li class="flex items-center justify-between gap-4 rounded-2xl bg-white px-4 py-3 ring-1 ring-cream-200">
+            <span class="flex items-center gap-3 font-semibold">
+              <span class:list={['size-3 rounded-full', dots[index % dots.length]]} />
+              {part.title}
+            </span>
+            <span class="font-display font-extrabold text-navy-900 tabular-nums">{part.total}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  <div data-tabs>
+    <div
+      role="tablist"
+      aria-label={t('rules.rubrics')}
+      class="grid w-full grid-cols-2 gap-1 rounded-2xl bg-white p-1.5 ring-1 ring-cream-200 sm:inline-grid sm:w-auto sm:auto-cols-auto sm:grid-flow-col sm:grid-cols-none sm:rounded-full"
+      hidden
+    >
+      {
+        parts.map((part, index) => (
+          <button
+            type="button"
+            role="tab"
+            id={`${part.id}-tab`}
+            aria-controls={`${part.id}-panel`}
+            aria-selected={index === 0 ? 'true' : 'false'}
+            tabindex={index === 0 ? 0 : -1}
+            class="rounded-xl px-3 py-2.5 text-sm leading-tight font-bold text-navy-700 transition-colors hover:text-navy-900 aria-selected:bg-navy-900 aria-selected:text-cream-50 sm:rounded-full sm:px-5 sm:whitespace-nowrap"
+          >
+            {part.title} · {part.total}
+          </button>
+        ))
+      }
+    </div>
+
+    {
+      parts.map((part) => (
+        <div role="tabpanel" id={`${part.id}-panel`} aria-labelledby={`${part.id}-tab`} class="mt-6 sm:mt-8" data-reveal>
+          <h3 class="mt-8 text-xl font-bold" data-tabs-fallback>
+            {part.title} · {part.total} {plural(lang, part.total, 'points')}
+          </h3>
+          <ul class="mt-4 space-y-6">
+            {part.criteria.map((criterion) => (
+              <li>
+                <div class="flex items-baseline justify-between gap-4">
+                  <p class="font-display font-bold text-navy-900">{criterion.name}</p>
+                  <p class="shrink-0 text-sm font-semibold whitespace-nowrap text-gold-700">
+                    <span class="font-display text-lg font-extrabold tabular-nums">{criterion.max}</span>{' '}
+                    {plural(lang, criterion.max, 'points')}
+                  </p>
+                </div>
+                <div class="mt-2 h-2.5 overflow-hidden rounded-full bg-navy-50">
+                  <div
+                    class="score-bar h-full rounded-full bg-linear-to-r from-gold-400 to-gold-600"
+                    style={`--w: ${(criterion.max / maxCriterion) * 100}%`}
+                  />
+                </div>
+                {criterion.focus && <p class="mt-2 text-sm text-navy-700">{criterion.focus}</p>}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))
+    }
+
+    <a
+      href={localizePath(PAGES.rules, lang)}
+      class="mt-10 inline-flex items-center gap-2 rounded-full bg-navy-900 px-6 py-3 font-semibold text-cream-50 transition hover:-translate-y-0.5 hover:bg-navy-800"
+    >
+      {t('home.scoring.more')}
+      <Icon name="arrow-right" class="size-4" />
+    </a>
+  </div>
+</div>

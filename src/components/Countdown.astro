@@ -1,0 +1,113 @@
+---
+/**
+ * Обратный отсчёт до начала саммита. Время — по Актобе (UTC+5).
+ * Пока время начала не задано в админке, считаем до полуночи дня саммита.
+ * Цифры видят только зрячие посетители: для экранных чтецов дата уже есть рядом текстом.
+ */
+import { INTL_LOCALE, PLURALS, useTranslations, type Lang } from '../i18n/ui';
+import { isoDate } from '../lib/format';
+
+interface Props {
+  lang: Lang;
+  date: Date;
+  timeStart: string;
+  class?: string;
+}
+
+const { lang, date, timeStart, class: className } = Astro.props;
+const t = useTranslations(lang);
+
+const time = /^\d{1,2}:\d{2}$/.test(timeStart.trim()) ? timeStart.trim().padStart(5, '0') : '00:00';
+const target = `${isoDate(date)}T${time}:00+05:00`;
+const units = ['days', 'hours', 'minutes', 'seconds'] as const;
+const labels = Object.fromEntries(units.map((unit) => [unit, PLURALS[lang][unit]]));
+---
+
+<div
+  data-countdown
+  data-target={target}
+  data-day={isoDate(date)}
+  data-locale={INTL_LOCALE[lang]}
+  data-labels={JSON.stringify(labels)}
+  class={className}
+>
+  <p class="text-xs font-semibold tracking-[0.2em] text-cream-200 uppercase" data-countdown-title>
+    {t('countdown.label')}
+  </p>
+  <p
+    class="mt-3 hidden items-center gap-2 font-display text-lg font-bold text-gold-300"
+    data-countdown-today
+  >
+    <span class="size-2.5 animate-pulse-dot rounded-full bg-gold-400"></span>
+    {t('countdown.today')}
+  </p>
+  <div class="mt-3 flex gap-2 sm:gap-3" aria-hidden="true" data-countdown-cells>
+    {
+      units.map((unit) => (
+        <div class="min-w-0 flex-1 rounded-2xl bg-white/[0.06] px-2 py-2.5 text-center ring-1 ring-white/10 backdrop-blur-sm sm:max-w-24 sm:px-3">
+          <span
+            class="block font-display text-[1.75rem] leading-none font-extrabold text-cream-50 tabular-nums sm:text-4xl"
+            data-unit={unit}
+          >
+            00
+          </span>
+          <span class="mt-1.5 block truncate text-[11px] text-cream-200 sm:text-xs" data-unit-label={unit} />
+        </div>
+      ))
+    }
+  </div>
+</div>
+
+<script>
+  type Forms = Partial<Record<Intl.LDMLPluralRule, string>> & { other: string };
+
+  for (const root of document.querySelectorAll<HTMLElement>('[data-countdown]')) {
+    const target = Date.parse(root.dataset.target ?? '');
+    const labels = JSON.parse(root.dataset.labels ?? '{}') as Record<string, Forms>;
+    const rules = new Intl.PluralRules(root.dataset.locale);
+    // Конец дня саммита по Актобе: до этого момента пишем «Саммит проходит сегодня».
+    const dayEnd = Date.parse(`${root.dataset.day}T23:59:59+05:00`);
+    const cells = root.querySelector<HTMLElement>('[data-countdown-cells]');
+    const title = root.querySelector<HTMLElement>('[data-countdown-title]');
+    const today = root.querySelector<HTMLElement>('[data-countdown-today]');
+    if (Number.isNaN(target) || !cells) continue;
+
+    const render = () => {
+      const now = Date.now();
+      if (now >= dayEnd) {
+        root.remove();
+        return false;
+      }
+      if (now >= target) {
+        cells.hidden = true;
+        if (title) title.hidden = true;
+        today?.classList.replace('hidden', 'flex');
+        root.classList.add('is-ready');
+        return false;
+      }
+
+      const total = Math.floor((target - now) / 1000);
+      const values = {
+        days: Math.floor(total / 86400),
+        hours: Math.floor((total % 86400) / 3600),
+        minutes: Math.floor((total % 3600) / 60),
+        seconds: total % 60,
+      };
+      for (const [unit, value] of Object.entries(values)) {
+        const number = root.querySelector(`[data-unit="${unit}"]`);
+        const label = root.querySelector(`[data-unit-label="${unit}"]`);
+        if (number) number.textContent = unit === 'days' ? String(value) : String(value).padStart(2, '0');
+        const forms = labels[unit];
+        if (label && forms) label.textContent = forms[rules.select(value)] ?? forms.other;
+      }
+      root.classList.add('is-ready');
+      return true;
+    };
+
+    if (render()) {
+      const timer = window.setInterval(() => {
+        if (!render()) window.clearInterval(timer);
+      }, 1000);
+    }
+  }
+</script>

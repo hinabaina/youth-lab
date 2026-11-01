@@ -6,9 +6,10 @@
 import '../styles/global.css';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
+import StickyCta from '../components/StickyCta.astro';
 import { localizePath, PAGES, type PageKey } from '../i18n/routing';
 import { DEFAULT_LANG, INTL_LOCALE, LOCALES, useTranslations, type Lang } from '../i18n/ui';
-import { getEvent, getResults } from '../lib/content';
+import { getEvent, getRegistration, getResults } from '../lib/content';
 
 interface Props {
   lang: Lang;
@@ -18,12 +19,17 @@ interface Props {
   title?: string;
   description?: string;
   noindex?: boolean;
+  /** Плашка регистрации внизу экрана на телефоне; на странице «Регистрация» не нужна. */
+  stickyCta?: boolean;
 }
 
-const { lang, page, title, description, noindex = false } = Astro.props;
+const { lang, page, title, description, noindex = false, stickyCta = true } = Astro.props;
 const t = useTranslations(lang);
-const event = await getEvent(lang);
-const results = await getResults(lang);
+const [event, results, registration] = await Promise.all([
+  getEvent(lang),
+  getResults(lang),
+  getRegistration(lang),
+]);
 
 const fullTitle = title ? `${title} — ${event.name}` : event.name;
 const metaDescription = description || event.tagline || t('meta.description');
@@ -72,10 +78,18 @@ const ogLocale = INTL_LOCALE[lang].replace('-', '_');
     {ogImage && <meta property="og:image:height" content="630" />}
     <meta name="twitter:card" content="summary_large_image" />
 
-    <meta name="theme-color" content="#102c51" />
+    <meta name="theme-color" content="#0a1d36" />
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <script is:inline>
+      // JavaScript работает: включаем анимации появления блоков (без него всё видно сразу).
+      // Если основной скрипт не загрузился за 4 секунды, показываем страницу без анимаций.
+      document.documentElement.classList.add('js');
+      setTimeout(function () {
+        if (!window.__ysUi) document.documentElement.classList.remove('js');
+      }, 4000);
+    </script>
     <slot name="head" />
   </head>
   <body class="flex min-h-dvh flex-col">
@@ -89,6 +103,11 @@ const ogLocale = INTL_LOCALE[lang].replace('-', '_');
     <main id="main" class="flex-1">
       <slot />
     </main>
-    <Footer lang={lang} event={event} />
+    <Footer lang={lang} event={event} showResults={results.published} />
+    {stickyCta && <StickyCta lang={lang} event={event} registration={registration} />}
+    <script>
+      import '../scripts/ui';
+      import '../scripts/tabs';
+    </script>
   </body>
 </html>

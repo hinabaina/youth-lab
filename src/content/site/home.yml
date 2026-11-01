@@ -1,8 +1,6 @@
 ru:
-  about: |-
-    **Youth Research Summit** — межшкольный исследовательский турнир. Команды изучают глобальную проблему, формулируют целенаправленный исследовательский вопрос, анализируют надёжные данные, предлагают реалистичное решение и защищают его перед жюри.
-
-    Наша цель — развивать у школьников исследовательские навыки и критическое мышление: учиться обсуждать научные проблемы, предлагать решения и аргументированно их защищать.
+  lead: За один день ваша команда из 2–4 человек исследует реальную глобальную проблему, предлагает решение и защищает его перед жюри.
+  about: Наша цель — развивать у школьников исследовательские навыки и критическое мышление, учить обсуждать научные проблемы, предлагать решения и аргументированно их защищать.
   facts:
     - value: '6'
       label: тематических комитетов
@@ -12,7 +10,60 @@ ru:
       label: 'баллов: 50 за исследование и 50 за выступление'
     - value: '3'
       label: 'рабочих языка: казахский, русский, английский'
+  format:
+    - icon: search
+      title: Исследуйте
+      meta: Сессия 1 · 60 мин
+      text: Определите конкретную проблему, сформулируйте исследовательский вопрос, найдите надёжные источники и соберите данные.
+    - icon: file-pen-line
+      title: Напишите
+      meta: Сессия 2 · 80 мин
+      text: Превратите заметки в исследовательскую записку (Research Solution Brief) до 2 страниц, с решением и ссылками на источники.
+    - icon: presentation
+      title: Защитите
+      meta: Сессия 3 · 5–6 мин на команду
+      text: Презентация 3–4 минуты и 2 минуты вопросов и ответов. Жюри выставляет баллы во время выступления.
+  steps:
+    - title: Соберите команду
+      text: 2–4 ученика 8–11 (12) классов. Команд от одной школы может быть сколько угодно.
+    - title: Выберите комитет
+      text: Шесть направлений — от технологий и ИИ до экономики и энергетики. Команда выступает в одном комитете.
+    - title: Зарегистрируйтесь
+      text: Заполните форму регистрации и оплатите участие. Реквизиты для оплаты будут в форме.
+    - title: Получите стартовые источники
+      text: Организаторы распределят команды по комитетам и подскажут, с каких источников начать исследование.
+    - title: Приходите на саммит
+      text: Исследование, записка и защита решения перед жюри — всё за один день.
+    - title: Узнайте итоги
+      text: В конце дня жюри объявит победителей. Каждый участник получит сертификат.
+  benefits:
+    - icon: file-badge
+      title: Сертификат каждому
+      text: Все участники саммита получают сертификаты.
+    - icon: trophy
+      title: Награды жюри
+      text: «Лучшая исследовательская работа», «Лучшее устное выступление» и «Команда-победитель» каждого комитета.
+    - icon: graduation-cap
+      title: Навыки исследователя
+      text: Работа с надёжными данными, критическое мышление и умение аргументированно защищать своё решение.
+  faq:
+    - question: Кто может участвовать?
+      answer: Ученики 8–11 (12) классов из любой школы. Количество команд от одной школы не ограничено.
+    - question: Сколько человек в команде?
+      answer: От 2 до 4. Каждая команда выступает в одном тематическом комитете.
+    - question: Сколько стоит участие?
+      answer: 2500 ₸ с каждого участника. Реквизиты для оплаты будут в форме регистрации.
+    - question: Нужно ли готовить исследование заранее?
+      answer: Нет. Исследование, записку и презентацию команды делают прямо на саммите. После регистрации организаторы порекомендуют стартовые источники — с ними полезно познакомиться заранее.
+    - question: На каком языке проходит саммит?
+      answer: Рабочие языки — казахский, русский и английский. Записку пишут на языке комитета; языки комитетов объявим позже.
+    - question: Нужно ли сопровождение взрослого?
+      answer: Нет, сопровождение взрослого не требуется.
+    - question: Где следить за новостями?
+      answer: 'В Instagram [@youthlab_akx](https://www.instagram.com/youthlab_akx/): там объявим открытие регистрации, а после саммита опубликуем итоги и фотографии.'
 kk:
+  lead: Бір күн ішінде 2–4 адамнан тұратын командаңыз нақты жаһандық мәселені зерттеп, шешім ұсынады және оны қазылар алқасының алдында қорғайды.
+  about: Мақсатымыз — оқушылардың зерттеушілік және сыни ойлау дағдыларын дамыту, ғылыми мәселелерді талқылауға, шешім ұсынуға және өз ойын дәлелді қорғауға үйрету.
   facts:
     - value: '6'
       label: тақырыптық комитет
@@ -22,11 +73,60 @@ kk:
       label: 'ұпай: зерттеу үшін 50 және баяндама үшін 50'
     - value: '3'
       label: 'жұмыс тілі: қазақ, орыс, ағылшын'
+  format:
+    - icon: search
+      title: Зерттеңіз
+      meta: 1-сессия · 60 мин
+      text: Нақты мәселені анықтап, зерттеу сұрағын тұжырымдаңыз, сенімді дереккөздерді тауып, деректер жинаңыз.
+    - icon: file-pen-line
+      title: Жазыңыз
+      meta: 2-сессия · 80 мин
+      text: Жазбаларыңызды шешім мен дереккөздерге сілтемелері бар, 2 беттен аспайтын зерттеу жазбасына (Research Solution Brief) айналдырыңыз.
+    - icon: presentation
+      title: Қорғаңыз
+      meta: 3-сессия · командаға 5–6 мин
+      text: 3–4 минуттық презентация және 2 минут сұрақ-жауап. Қазылар баяндама кезінде ұпай қояды.
+  steps:
+    - title: Команда жинаңыз
+      text: 8–11 (12) сыныптардың 2–4 оқушысы. Бір мектептен қатысатын командалар саны шектелмейді.
+    - title: Комитет таңдаңыз
+      text: Технологиялар мен ЖИ-ден экономика мен энергетикаға дейін алты бағыт. Команда бір комитетте қатысады.
+    - title: Тіркеліңіз
+      text: Тіркеу формасын толтырып, қатысу ақысын төлеңіз. Төлем деректемелері формада көрсетіледі.
+    - title: Бастапқы дереккөздерді алыңыз
+      text: Ұйымдастырушылар командаларды комитеттерге бөліп, зерттеуді қай дереккөздерден бастау керегін ұсынады.
+    - title: Саммитке келіңіз
+      text: Зерттеу, жазба және шешімді қазылар алдында қорғау — бәрі бір күнде.
+    - title: Қорытындыны біліңіз
+      text: Күн соңында қазылар жеңімпаздарды жариялайды. Әр қатысушы сертификат алады.
+  benefits:
+    - icon: file-badge
+      title: Әр қатысушыға сертификат
+      text: Саммиттің барлық қатысушылары сертификат алады.
+    - icon: trophy
+      title: Қазылар марапаттары
+      text: «Үздік зерттеу жұмысы», «Үздік ауызша баяндама» және әр комитеттің «Жеңімпаз командасы».
+    - icon: graduation-cap
+      title: Зерттеушілік дағдылар
+      text: Сенімді деректермен жұмыс, сыни ойлау және өз шешіміңді дәлелді түрде қорғау.
+  faq:
+    - question: Кімдер қатыса алады?
+      answer: Кез келген мектептің 8–11 (12) сынып оқушылары. Бір мектептен қатысатын командалар саны шектелмейді.
+    - question: Командада неше адам болады?
+      answer: 2-ден 4-ке дейін. Әр команда бір тақырыптық комитетте қатысады.
+    - question: Қатысу құны қанша?
+      answer: Әр қатысушыдан 2500 ₸. Төлем деректемелері тіркеу формасында көрсетіледі.
+    - question: Зерттеуді алдын ала дайындау керек пе?
+      answer: Жоқ. Зерттеуді, жазбаны және презентацияны командалар саммиттің өзінде дайындайды. Тіркелгеннен кейін ұйымдастырушылар бастапқы дереккөздерді ұсынады — олармен алдын ала танысып шыққан пайдалы.
+    - question: Саммит қай тілде өтеді?
+      answer: Жұмыс тілдері — қазақ, орыс және ағылшын тілдері. Жазба комитет тілінде жазылады; комитеттердің тілін кейінірек хабарлаймыз.
+    - question: Ересек адамның алып жүруі қажет пе?
+      answer: Жоқ, ересек адамның алып жүруі талап етілмейді.
+    - question: Жаңалықтарды қайдан білуге болады?
+      answer: 'Instagram-да [@youthlab_akx](https://www.instagram.com/youthlab_akx/): онда тіркеудің ашылғанын хабарлаймыз, ал саммиттен кейін қорытынды мен фотосуреттерді жариялаймыз.'
 en:
-  about: |-
-    **Youth Research Summit** is an inter-school research tournament. Teams study a global problem, formulate a focused research question, analyse reliable data, propose a realistic solution and defend it before a jury.
-
-    Our goal is to develop students' research skills and critical thinking: to discuss scientific problems, propose solutions and defend them with evidence.
+  lead: In one day, your team of 2–4 investigates a real global problem, proposes a solution and defends it before a jury.
+  about: Our goal is to help students develop research skills and critical thinking, and to learn to discuss scientific problems, propose solutions and defend them with evidence.
   facts:
     - value: '6'
       label: thematic committees
@@ -36,3 +136,54 @@ en:
       label: 'points: 50 for research and 50 for the presentation'
     - value: '3'
       label: 'working languages: Kazakh, Russian, English'
+  format:
+    - icon: search
+      title: Research
+      meta: Session 1 · 60 min
+      text: Define a specific problem, formulate a research question, find reliable sources and collect data.
+    - icon: file-pen-line
+      title: Write
+      meta: Session 2 · 80 min
+      text: Turn your notes into a Research Solution Brief of up to 2 pages, with a solution and citations.
+    - icon: presentation
+      title: Defend
+      meta: Session 3 · 5–6 min per team
+      text: A 3–4 minute presentation and 2 minutes of questions and answers. The jury scores during the presentation.
+  steps:
+    - title: Build a team
+      text: 2–4 students in grades 8–11 (12). There is no limit on the number of teams from one school.
+    - title: Choose a committee
+      text: Six areas, from technology and AI to economics and energy. Each team takes part in one committee.
+    - title: Register
+      text: Fill in the registration form and pay the participation fee. Payment details will be in the form.
+    - title: Get starting sources
+      text: The organisers will assign teams to committees and suggest which sources to start your research with.
+    - title: Come to the summit
+      text: Research, writing and defending your solution before the jury, all in one day.
+    - title: See the results
+      text: At the end of the day the jury announces the winners. Every participant receives a certificate.
+  benefits:
+    - icon: file-badge
+      title: A certificate for everyone
+      text: Every summit participant receives a certificate.
+    - icon: trophy
+      title: Jury awards
+      text: Best Research Paper, Best Oral Presentation and the Winning Team of each committee.
+    - icon: graduation-cap
+      title: Research skills
+      text: Working with reliable data, critical thinking and defending your solution with evidence.
+  faq:
+    - question: Who can take part?
+      answer: Students in grades 8–11 (12) from any school. There is no limit on the number of teams from one school.
+    - question: How many people are in a team?
+      answer: From 2 to 4. Each team takes part in one thematic committee.
+    - question: How much does it cost?
+      answer: 2,500 ₸ per participant. Payment details will be provided in the registration form.
+    - question: Do we need to prepare our research in advance?
+      answer: No. Teams do the research, write the brief and prepare the presentation at the summit itself. After registration, the organisers will recommend starting sources, and it helps to look through them in advance.
+    - question: What language is the summit in?
+      answer: The working languages are Kazakh, Russian and English. The brief is written in the committee's language; we will announce the committee languages later.
+    - question: Does a student need to be accompanied by an adult?
+      answer: No, an accompanying adult is not required.
+    - question: Where can I follow the news?
+      answer: 'On Instagram [@youthlab_akx](https://www.instagram.com/youthlab_akx/): we will announce the opening of registration there, and after the summit we will post the results and photos.'

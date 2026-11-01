@@ -6,6 +6,7 @@
 import { useTranslations, type Lang } from '../i18n/ui';
 import type { getRegistration } from '../lib/content';
 import { formatDate } from '../lib/format';
+import Icon from './Icon.astro';
 
 interface Props {
   lang: Lang;
@@ -21,8 +22,11 @@ const { status, formUrl, opensOn, deadline, note } = registration;
 
 const pill =
   tone === 'dark'
-    ? 'border-navy-700 bg-navy-800 text-cream-100'
-    : 'border-cream-200 bg-white text-navy-900';
+    ? 'bg-white/[0.06] text-cream-50 ring-white/15'
+    : 'bg-white text-navy-900 ring-cream-200';
+const soonText = opensOn ? t('cta.opensOn', { date: formatDate(opensOn, lang) }) : t('cta.soon');
+// Примечание, которое повторяет статус, не показываем второй раз.
+const visibleNote = showNote && note && !(status === 'soon' && note.startsWith(soonText)) ? note : '';
 ---
 
 <div class="flex flex-col items-start gap-3">
@@ -32,29 +36,25 @@ const pill =
         href={formUrl}
         target="_blank"
         rel="noopener"
-        class="inline-flex items-center gap-2 rounded-full bg-gold-500 px-7 py-3.5 font-display text-base font-bold text-navy-950 shadow-sm transition-colors hover:bg-gold-400"
+        class="inline-flex items-center gap-2 rounded-full bg-gold-500 px-7 py-3.5 font-display text-base font-bold text-navy-950 shadow-lg shadow-gold-500/20 transition hover:-translate-y-0.5 hover:bg-gold-400"
       >
         {t('cta.open')}
-        <svg aria-hidden="true" viewBox="0 0 20 20" class="size-4">
-          <path d="M7 13 13 7M8 7h5v5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-        </svg>
+        <Icon name="arrow-up-right" class="size-4" />
         <span class="sr-only">({t('a11y.newTab')})</span>
       </a>
     )
   }
   {
     status === 'soon' && (
-      <p class:list={['inline-flex items-center gap-2 rounded-full border px-5 py-3 font-semibold', pill]}>
-        <span aria-hidden="true" class="size-2 rounded-full bg-gold-500" />
-        {opensOn ? t('cta.opensOn', { date: formatDate(opensOn, lang) }) : t('cta.soon')}
+      <p class:list={['inline-flex items-center gap-3 rounded-full px-5 py-3 font-semibold ring-1', pill]}>
+        <span aria-hidden="true" class="size-2.5 animate-pulse-dot rounded-full bg-gold-500" />
+        {soonText}
       </p>
     )
   }
   {
     status === 'closed' && (
-      <p class:list={['inline-flex rounded-full border px-5 py-3 font-semibold opacity-90', pill]}>
-        {t('cta.closed')}
-      </p>
+      <p class:list={['inline-flex rounded-full px-5 py-3 font-semibold ring-1', pill]}>{t('cta.closed')}</p>
     )
   }
   {
@@ -65,8 +65,8 @@ const pill =
     )
   }
   {
-    showNote && note && (
-      <p class:list={['max-w-prose text-sm', tone === 'dark' ? 'text-cream-200' : 'text-navy-700']}>{note}</p>
+    visibleNote && (
+      <p class:list={['max-w-prose text-sm', tone === 'dark' ? 'text-cream-200' : 'text-navy-700']}>{visibleNote}</p>
     )
   }
 </div>

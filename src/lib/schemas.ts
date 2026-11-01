@@ -61,10 +61,20 @@ export const registrationSchema = z.object({
   body: text,
 });
 
-/** Главная страница. */
+/** Главная страница: блоки идут в том порядке, в каком их видит посетитель. */
 export const homeSchema = z.object({
+  /** Одна-две фразы под названием: что делает команда на саммите. */
+  lead: text,
   about: text,
   facts: list(z.object({ value: requiredText, label: requiredText })),
+  /** «Формат»: три этапа дня — исследовать, написать, защитить. */
+  format: list(z.object({ icon: text, title: requiredText, meta: text, text: text })),
+  /** «Как принять участие»: шаги от сбора команды до итогов. */
+  steps: list(z.object({ title: requiredText, text: text })),
+  /** «Что получат участники». */
+  benefits: list(z.object({ icon: text, title: requiredText, text: text })),
+  /** «Вопросы и ответы»; ответ — Markdown. */
+  faq: list(z.object({ question: requiredText, answer: text })),
 });
 
 /** Программа дня. */
@@ -76,6 +86,8 @@ export const programSchema = z.object({
       duration: text,
       title: requiredText,
       description: text,
+      /** session — основной этап (выделяется), break — перерыв, пусто — обычный этап. */
+      kind: text,
     }),
   ),
 });
@@ -119,6 +131,8 @@ export const resultsSchema = z.object({
 /** Комитет. */
 export const committeeSchema = z.object({
   title: requiredText,
+  /** Название иконки из src/icons/icons.ts; если пусто или неизвестно — лампочка. */
+  icon: text,
   topics: stringList,
   sources: stringList,
   language: z.preprocess(
