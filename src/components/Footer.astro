@@ -1,74 +1,118 @@
 ---
-/** Подвал: место проведения, контакты, организатор. */
+/** Подвал: логотип, контакты, разделы сайта. */
 import { localizePath, PAGES } from '../i18n/routing';
 import { useTranslations, type Lang } from '../i18n/ui';
 import type { getEvent } from '../lib/content';
-import { formatPhone, instagramHandle, instagramUrl, phoneHref } from '../lib/format';
+import { formatDate, formatPhone, instagramHandle, instagramUrl, phoneHref } from '../lib/format';
+import Icon from './Icon.astro';
 
 interface Props {
   lang: Lang;
   event: Awaited<ReturnType<typeof getEvent>>;
+  /** Пункт «Итоги» появляется, когда в админке включён показ итогов. */
+  showResults: boolean;
 }
 
-const { lang, event } = Astro.props;
+const { lang, event, showResults } = Astro.props;
 const t = useTranslations(lang);
 const place = [event.venue, event.address, event.city].filter(Boolean).join(', ');
+const links = (['home', 'committees', 'rules', 'register', 'results'] as const)
+  .filter((key) => key !== 'results' || showResults)
+  .map((key) => ({ href: localizePath(PAGES[key], lang), label: t(`nav.${key}`) }));
+const summary = [event.name, formatDate(event.date, lang), event.city].filter(Boolean).join(' · ');
+
+const headingClass = 'font-display text-xs font-bold tracking-[0.2em] text-gold-400 uppercase';
+const linkClass = 'group inline-flex items-start gap-3 transition-colors hover:text-gold-300';
+const iconClass = 'mt-0.5 size-4 shrink-0 text-gold-400';
 ---
 
 <footer class="bg-navy-950 text-cream-100">
-  <div class="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-3 lg:px-8">
-    <div class="space-y-3">
-      <img src="/brand/logo-cream.png" alt={event.name} width="160" height="114" class="h-auto w-40" />
-      <p class="text-sm text-cream-200">{t('footer.organizer')}</p>
+  <div class="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.1fr_1.3fr_1fr] lg:px-8">
+    <div>
+      <img src="/brand/logo-cream.png" alt={event.name} width="160" height="114" class="h-auto w-36" />
+      {event.tagline && <p class="mt-5 max-w-xs text-sm leading-relaxed text-cream-200">{event.tagline}</p>}
+      <p class="mt-3 text-sm text-cream-300">{t('footer.organizer')}</p>
     </div>
 
-    <div class="space-y-2 text-sm">
-      <h2 class="font-display text-base font-semibold text-cream-50">{t('home.contacts')}</h2>
-      {place && <p class="text-cream-200">{place}</p>}
-      {
-        event.mapUrl && (
-          <p>
-            <a href={event.mapUrl} target="_blank" rel="noopener" class="underline decoration-gold-500 underline-offset-4">
-              {t('event.map')}
-              <span class="sr-only"> ({t('a11y.newTab')})</span>
-            </a>
-          </p>
-        )
-      }
-      {
-        event.phone && (
-          <p>
-            <a href={phoneHref(event.phone)} class="hover:text-gold-400">
-              {formatPhone(event.phone)}
-            </a>
-          </p>
-        )
-      }
-      {
-        event.instagram && (
-          <p>
-            <a href={instagramUrl(event.instagram)} target="_blank" rel="noopener" class="hover:text-gold-400">
-              Instagram: @{instagramHandle(event.instagram)}
-              <span class="sr-only"> ({t('a11y.newTab')})</span>
-            </a>
-          </p>
-        )
-      }
-      {
-        event.email && (
-          <p>
-            <a href={`mailto:${event.email}`} class="hover:text-gold-400">
-              {event.email}
-            </a>
-          </p>
-        )
-      }
+    <div>
+      <h2 class={headingClass}>{t('home.contacts')}</h2>
+      <ul class="mt-5 space-y-3.5 text-sm">
+        {
+          place && (
+            <li class="flex items-start gap-3 text-cream-200">
+              <Icon name="map-pin" class={iconClass} />
+              <span>
+                {place}
+                {event.mapUrl && (
+                  <a
+                    href={event.mapUrl}
+                    target="_blank"
+                    rel="noopener"
+                    class="mt-1 block font-semibold text-cream-50 underline decoration-gold-500 underline-offset-4 hover:text-gold-300"
+                  >
+                    {t('event.map')}
+                    <span class="sr-only"> ({t('a11y.newTab')})</span>
+                  </a>
+                )}
+              </span>
+            </li>
+          )
+        }
+        {
+          event.phone && (
+            <li>
+              <a href={phoneHref(event.phone)} class={linkClass}>
+                <Icon name="phone" class={iconClass} />
+                {formatPhone(event.phone)}
+              </a>
+            </li>
+          )
+        }
+        {
+          event.instagram && (
+            <li>
+              <a href={instagramUrl(event.instagram)} target="_blank" rel="noopener" class={linkClass}>
+                <Icon name="instagram" class={iconClass} />
+                @{instagramHandle(event.instagram)}
+                <span class="sr-only"> (Instagram, {t('a11y.newTab')})</span>
+              </a>
+            </li>
+          )
+        }
+        {
+          event.email && (
+            <li>
+              <a href={`mailto:${event.email}`} class={linkClass}>
+                <Icon name="mail" class={iconClass} />
+                {event.email}
+              </a>
+            </li>
+          )
+        }
+      </ul>
     </div>
 
-    <ul class="space-y-2 text-sm">
-      <li><a href={localizePath(PAGES.committees, lang)} class="hover:text-gold-400">{t('nav.committees')}</a></li>
-      <li><a href={localizePath(PAGES.rules, lang)} class="hover:text-gold-400">{t('nav.rules')}</a></li>
-      <li><a href={localizePath(PAGES.register, lang)} class="hover:text-gold-400">{t('nav.register')}</a></li>
-    </ul>
+    <nav aria-label={t('footer.nav')}>
+      <h2 class={headingClass}>{t('footer.nav')}</h2>
+      <ul class="mt-5 space-y-3.5 text-sm">
+        {
+          links.map(({ href, label }) => (
+            <li>
+              <a href={href} class={linkClass}>
+                {label}
+                <Icon
+                  name="arrow-up-right"
+                  class="size-3.5 self-center text-cream-300 opacity-0 transition-opacity group-hover:opacity-100"
+                />
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+
+  <div class="border-t border-white/10">
+    <p class="mx-auto max-w-6xl px-4 py-5 text-xs text-cream-300 sm:px-6 lg:px-8">{summary}</p>
   </div>
 </footer>

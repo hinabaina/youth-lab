@@ -36,9 +36,9 @@ Cloudflare → проект → **Settings** → **Variables and Secrets** → *
 | --- | --- | --- |
 | `GITHUB_CLIENT_ID` | Client ID из шага 2 | Text |
 | `GITHUB_CLIENT_SECRET` | секрет из шага 2 | Secret |
-| `SITE_URL` | `https://<project>.pages.dev` (или ваш домен) | Text |
+| `SITE_URL` | ваш домен, например `https://example.kz` — только если подключили свой домен (шаг 5) | Text |
 
-`SITE_URL` нужен для ссылок на другие языки и картинки-превью, когда ссылку на сайт отправляют в WhatsApp, Telegram или Instagram.
+Без `SITE_URL` сайт сам берёт свой адрес `https://<project>.pages.dev` у Cloudflare: по нему строятся ссылки на другие языки и картинка превью, которую показывают WhatsApp, Telegram и Instagram, когда отправляют ссылку на сайт. Задавайте `SITE_URL`, только когда подключите свой домен.
 
 После этого пересоберите сайт: **Deployments** → последняя сборка → **Retry deployment**. Переменные применяются только к новым сборкам.
 
@@ -55,7 +55,7 @@ Cloudflare → проект → **Settings** → **Variables and Secrets** → *
 Cloudflare → проект → **Custom domains** → **Set up a custom domain**. После подключения домена:
 
 - в OAuth App на GitHub замените Homepage URL и Authorization callback URL на новый домен;
-- в Cloudflare поменяйте `SITE_URL` и пересоберите сайт.
+- в Cloudflare добавьте переменную `SITE_URL` с адресом домена (например, `https://example.kz`) и пересоберите сайт.
 
 ## Как публикуются правки
 

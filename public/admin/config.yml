@@ -181,15 +181,80 @@ singletons:
     file: src/content/site/home.yml
     i18n: true
     fields:
+      - name: lead
+        label: Подводка на первом экране
+        hint: 1–2 предложения под названием и подзаголовком — что команда делает на саммите.
+        widget: text
+        i18n: true
+        required: false
       - name: about
-        label: О саммите
+        label: Зачем саммит (блок «Формат»)
+        hint: Короткий абзац над тремя карточками формата.
         widget: markdown
         i18n: true
         required: false
+      - name: format
+        label: Формат — карточки этапов
+        label_singular: карточка
+        hint: Три шага дня — исследовать, написать, защитить. Они же видны на первом экране вокруг совы (на компьютере).
+        widget: list
+        i18n: duplicate
+        required: false
+        summary: '{{fields.title}} — {{fields.meta}}'
+        fields:
+          - &icon_field
+            name: icon
+            label: Иконка
+            widget: select
+            required: false
+            options: &icon_options
+              - { label: Поиск (лупа), value: search }
+              - { label: Записка (лист с ручкой), value: file-pen-line }
+              - { label: Выступление (экран), value: presentation }
+              - { label: Микрофон, value: mic }
+              - { label: Команда (люди), value: users }
+              - { label: Цель (мишень), value: target }
+              - { label: Исследование (микроскоп), value: microscope }
+              - { label: Сертификат, value: file-badge }
+              - { label: Кубок, value: trophy }
+              - { label: Награда (розетка), value: award }
+              - { label: Медаль, value: medal }
+              - { label: Обучение (шапочка), value: graduation-cap }
+              - { label: Книга, value: book-open }
+              - { label: Звёзды, value: sparkles }
+              - { label: Идея (лампочка), value: lightbulb }
+              - { label: Технологии (микросхема), value: cpu }
+              - { label: Искусственный интеллект, value: brain-circuit }
+              - { label: Экология (лист), value: leaf }
+              - { label: Здоровье (сердце), value: heart-pulse }
+              - { label: Право (весы), value: scale }
+              - { label: Общество и государство (здание), value: landmark }
+              - { label: Экономика (график), value: trending-up }
+              - { label: Физика (атом), value: atom }
+              - { label: Энергетика (молния), value: zap }
+              - { label: Химия и биология (колба), value: flask-conical }
+              - { label: Мир (глобус), value: globe }
+              - { label: Культура (палитра), value: palette }
+          - name: title
+            label: Заголовок
+            widget: string
+            i18n: true
+            required: [ru]
+          - name: meta
+            label: Подпись
+            hint: Например, «Сессия 1 · 60 мин».
+            widget: string
+            i18n: true
+            required: false
+          - name: text
+            label: Текст
+            widget: text
+            i18n: true
+            required: false
       - name: facts
-        label: Цифры на главной
+        label: Цифры под карточками формата
         label_singular: факт
-        hint: 3–4 коротких факта, например «6» и «тематических комитетов».
+        hint: 3–4 коротких факта, например «6» и «тематических комитетов». Числа на сайте «набегают» от нуля.
         widget: list
         i18n: duplicate
         required: false
@@ -203,6 +268,66 @@ singletons:
             widget: string
             i18n: true
             required: [ru]
+      - name: steps
+        label: Как принять участие — шаги
+        label_singular: шаг
+        hint: Шаги нумеруются сами, по порядку в списке. Они же показаны на странице «Регистрация».
+        widget: list
+        i18n: duplicate
+        required: false
+        summary: '{{fields.title}}'
+        fields:
+          - name: title
+            label: Заголовок шага
+            widget: string
+            i18n: true
+            required: [ru]
+          - name: text
+            label: Пояснение
+            widget: text
+            i18n: true
+            required: false
+      - name: benefits
+        label: Что получат участники
+        label_singular: пункт
+        hint: Например, сертификаты, награды, призы партнёров.
+        widget: list
+        i18n: duplicate
+        required: false
+        summary: '{{fields.title}}'
+        fields:
+          - *icon_field
+          - name: title
+            label: Заголовок
+            widget: string
+            i18n: true
+            required: [ru]
+          - name: text
+            label: Текст
+            widget: text
+            i18n: true
+            required: false
+      - name: faq
+        label: Вопросы и ответы
+        label_singular: вопрос
+        hint: Показываются на главной и на странице «Регистрация». Если меняете дату или стоимость в разделе «Основное», проверьте и ответы здесь.
+        widget: list
+        i18n: duplicate
+        required: false
+        summary: '{{fields.question}}'
+        fields:
+          - name: question
+            label: Вопрос
+            widget: string
+            i18n: true
+            required: [ru]
+          - name: answer
+            label: Ответ
+            widget: markdown
+            i18n: true
+            required: false
+            buttons: [bold, italic, link, bulleted-list, numbered-list]
+            editor_components: []
 
   - name: program
     label: Программа дня
@@ -245,6 +370,14 @@ singletons:
             widget: text
             i18n: true
             required: false
+          - name: kind
+            label: Тип этапа
+            hint: «Сессия» выделяется тёмной карточкой, «Перерыв» — компактной строкой. Для остальных этапов оставьте пустым.
+            widget: select
+            required: false
+            options:
+              - { label: Сессия, value: session }
+              - { label: Перерыв, value: break }
 
   - name: rules
     label: Правила и оценка
@@ -400,6 +533,12 @@ collections:
         widget: string
         i18n: true
         required: [ru]
+      - name: icon
+        label: Иконка
+        hint: Картинка на плитке комитета. Если не выбрать, будет лампочка.
+        widget: select
+        required: false
+        options: *icon_options
       - name: language
         label: Язык комитета
         hint: Оставьте пустым, пока язык не решён — тогда на сайте он не показывается.

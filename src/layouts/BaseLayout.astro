@@ -6,9 +6,11 @@
 import '../styles/global.css';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
+import StickyCta from '../components/StickyCta.astro';
 import { localizePath, PAGES, type PageKey } from '../i18n/routing';
 import { DEFAULT_LANG, INTL_LOCALE, LOCALES, useTranslations, type Lang } from '../i18n/ui';
-import { getEvent, getResults } from '../lib/content';
+import { getEvent, getRegistration, getResults } from '../lib/content';
+import { formatDate } from '../lib/format';
 
 interface Props {
   lang: Lang;
@@ -18,18 +20,25 @@ interface Props {
   title?: string;
   description?: string;
   noindex?: boolean;
+  /** Плашка регистрации внизу экрана на телефоне; на странице «Регистрация» не нужна. */
+  stickyCta?: boolean;
 }
 
-const { lang, page, title, description, noindex = false } = Astro.props;
+const { lang, page, title, description, noindex = false, stickyCta = true } = Astro.props;
 const t = useTranslations(lang);
-const event = await getEvent(lang);
-const results = await getResults(lang);
+const [event, results, registration] = await Promise.all([
+  getEvent(lang),
+  getResults(lang),
+  getRegistration(lang),
+]);
 
 const fullTitle = title ? `${title} — ${event.name}` : event.name;
-const metaDescription = description || event.tagline || t('meta.description');
+// Подпись под ссылкой в мессенджерах: когда и где, затем о чём турнир. Всё берётся из админки.
+const when = [formatDate(event.date, lang), event.city].filter(Boolean).join(', ');
+const metaDescription = description || [when, event.tagline].filter(Boolean).join('. ') || t('meta.description');
 
-// Абсолютные ссылки (canonical, hreflang, картинка для превью) возможны, только если
-// при сборке известен адрес сайта — переменная окружения SITE_URL (см. docs/DEPLOY.md).
+// Абсолютные ссылки (canonical, hreflang, картинка для превью) возможны, только если при сборке
+// известен адрес сайта: SITE_URL или адрес от Cloudflare (см. astro.config.mjs и docs/DEPLOY.md).
 const site = Astro.site;
 const path = page ? PAGES[page] : null;
 const canonical = site && path ? new URL(localizePath(path, lang), site).href : undefined;
@@ -37,7 +46,9 @@ const alternates =
   site && path
     ? LOCALES.map((code) => ({ code, href: new URL(localizePath(path, code), site).href }))
     : [];
-const ogImage = site ? new URL('/brand/og-image.png', site).href : undefined;
+// Картинка превью на языке страницы, в стиле сайта (её рисует scripts/share-images.mjs).
+const ogImage = site ? new URL(`/brand/share-${lang}.jpg`, site).href : undefined;
+const ogImageAlt = [event.name, event.tagline].filter(Boolean).join(' — ');
 const ogLocale = INTL_LOCALE[lang].replace('-', '_');
 ---
 
@@ -68,14 +79,24 @@ const ogLocale = INTL_LOCALE[lang].replace('-', '_');
     <meta property="og:locale" content={ogLocale} />
     {canonical && <meta property="og:url" content={canonical} />}
     {ogImage && <meta property="og:image" content={ogImage} />}
+    {ogImage && <meta property="og:image:type" content="image/jpeg" />}
     {ogImage && <meta property="og:image:width" content="1200" />}
     {ogImage && <meta property="og:image:height" content="630" />}
+    {ogImage && <meta property="og:image:alt" content={ogImageAlt} />}
     <meta name="twitter:card" content="summary_large_image" />
 
-    <meta name="theme-color" content="#102c51" />
+    <meta name="theme-color" content="#0a1d36" />
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <script is:inline>
+      // JavaScript работает: включаем анимации появления блоков (без него всё видно сразу).
+      // Если основной скрипт не загрузился за 4 секунды, показываем страницу без анимаций.
+      document.documentElement.classList.add('js');
+      setTimeout(function () {
+        if (!window.__ysUi) document.documentElement.classList.remove('js');
+      }, 4000);
+    </script>
     <slot name="head" />
   </head>
   <body class="flex min-h-dvh flex-col">
@@ -89,6 +110,11 @@ const ogLocale = INTL_LOCALE[lang].replace('-', '_');
     <main id="main" class="flex-1">
       <slot />
     </main>
-    <Footer lang={lang} event={event} />
+    <Footer lang={lang} event={event} showResults={results.published} />
+    {stickyCta && <StickyCta lang={lang} event={event} registration={registration} />}
+    <script>
+      import '../scripts/ui';
+      import '../scripts/tabs';
+    </script>
   </body>
 </html>

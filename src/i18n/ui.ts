@@ -69,6 +69,35 @@ const ru = {
   'home.partners': 'Партнёры',
   'home.contacts': 'Контакты',
 
+  'hero.how': 'Как это устроено',
+  'hero.follow': 'Следить в Instagram',
+  'countdown.label': 'До саммита',
+  'countdown.today': 'Саммит проходит сегодня',
+  'step.label': 'Шаг {n}',
+
+  'home.format.eyebrow': 'Формат',
+  'home.format.title': 'Исследование за один день',
+  'home.steps.eyebrow': 'Шаг за шагом',
+  'home.steps.title': 'Как принять участие',
+  'home.committees.eyebrow': 'Комитеты',
+  'home.committees.title': 'Выберите направление',
+  'home.committees.hint': 'Нажмите на комитет, чтобы увидеть направления и источники.',
+  'home.program.eyebrow': 'День саммита',
+  'home.program.title': 'Как пройдёт день',
+  'home.scoring.eyebrow': 'Оценка',
+  'home.scoring.title': 'Как оценивает жюри',
+  'home.scoring.lead': 'Жюри оценивает представленную работу и выступление, а не только сложность темы. Ко всем командам применяются одинаковые стандарты.',
+  'home.scoring.more': 'Все правила и требования к записке',
+  'home.benefits.eyebrow': 'Награды',
+  'home.benefits.title': 'Что получат участники',
+  'home.faq.eyebrow': 'Вопросы',
+  'home.faq.title': 'Вопросы и ответы',
+  'home.final.title': 'Соберите команду и приходите на саммит',
+  'home.final.questions': 'Остались вопросы? Напишите нам в Instagram или позвоните.',
+  'sticky.follow': 'Следить',
+  'committees.more': 'Подробнее о комитете',
+  'committees.count': '{n} из {total}',
+
   'home.registerMore': 'Подробнее о регистрации',
   'home.rulesMore': 'Правила и критерии оценки',
   'committees.title': 'Комитеты',
@@ -87,6 +116,7 @@ const ru = {
   'rules.points': 'баллов',
   'rules.awards': 'Награды',
   'rules.document': 'Скачать Положение (PDF)',
+  'rules.toc': 'На этой странице',
 
   'register.title': 'Регистрация',
   'register.howTo': 'Как участвовать',
@@ -107,6 +137,7 @@ const ru = {
 
   'contacts.questions': 'Остались вопросы? Напишите или позвоните нам.',
   'footer.organizer': 'Организатор — Youth Lab',
+  'footer.nav': 'Разделы',
 
   'notFound.title': 'Страница не найдена',
   'notFound.back': 'На главную',
@@ -158,6 +189,35 @@ const kk: Record<UiKey, string> = {
   'home.partners': 'Серіктестер',
   'home.contacts': 'Байланыс',
 
+  'hero.how': 'Бұл қалай өтеді',
+  'hero.follow': 'Instagram-да бақылау',
+  'countdown.label': 'Саммитке дейін',
+  'countdown.today': 'Саммит бүгін өтеді',
+  'step.label': '{n}-қадам',
+
+  'home.format.eyebrow': 'Формат',
+  'home.format.title': 'Бір күндегі зерттеу',
+  'home.steps.eyebrow': 'Қадам-қадаммен',
+  'home.steps.title': 'Қалай қатысуға болады',
+  'home.committees.eyebrow': 'Комитеттер',
+  'home.committees.title': 'Бағытты таңдаңыз',
+  'home.committees.hint': 'Бағыттар мен дереккөздерді көру үшін комитетті басыңыз.',
+  'home.program.eyebrow': 'Саммит күні',
+  'home.program.title': 'Күн қалай өтеді',
+  'home.scoring.eyebrow': 'Бағалау',
+  'home.scoring.title': 'Қазылар қалай бағалайды',
+  'home.scoring.lead': 'Қазылар тақырыптың күрделілігін ғана емес, ұсынылған жұмыс пен баяндаманы бағалайды. Барлық командаға бірдей талап қойылады.',
+  'home.scoring.more': 'Барлық ереже және жазбаға қойылатын талаптар',
+  'home.benefits.eyebrow': 'Марапаттар',
+  'home.benefits.title': 'Қатысушылар не алады',
+  'home.faq.eyebrow': 'Сұрақтар',
+  'home.faq.title': 'Сұрақ-жауап',
+  'home.final.title': 'Команда жинап, саммитке келіңіз',
+  'home.final.questions': 'Сұрақтарыңыз бар ма? Instagram-да жазыңыз немесе қоңырау шалыңыз.',
+  'sticky.follow': 'Бақылау',
+  'committees.more': 'Комитет туралы толығырақ',
+  'committees.count': '{n} / {total}',
+
   'home.registerMore': 'Тіркеу туралы толығырақ',
   'home.rulesMore': 'Ережелер мен бағалау критерийлері',
   'committees.title': 'Комитеттер',
@@ -176,6 +236,7 @@ const kk: Record<UiKey, string> = {
   'rules.points': 'ұпай',
   'rules.awards': 'Марапаттар',
   'rules.document': 'Ережені жүктеп алу (PDF)',
+  'rules.toc': 'Осы бетте',
 
   'register.title': 'Тіркеу',
   'register.howTo': 'Қалай қатысуға болады',
@@ -196,6 +257,7 @@ const kk: Record<UiKey, string> = {
 
   'contacts.questions': 'Сұрақтарыңыз бар ма? Бізге жазыңыз немесе қоңырау шалыңыз.',
   'footer.organizer': 'Ұйымдастырушы — Youth Lab',
+  'footer.nav': 'Бөлімдер',
 
   'notFound.title': 'Бет табылмады',
   'notFound.back': 'Басты бетке',
@@ -245,6 +307,35 @@ const en: Record<UiKey, string> = {
   'home.partners': 'Partners',
   'home.contacts': 'Contacts',
 
+  'hero.how': 'How it works',
+  'hero.follow': 'Follow on Instagram',
+  'countdown.label': 'Summit starts in',
+  'countdown.today': 'The summit is today',
+  'step.label': 'Step {n}',
+
+  'home.format.eyebrow': 'Format',
+  'home.format.title': 'Research in a single day',
+  'home.steps.eyebrow': 'Step by step',
+  'home.steps.title': 'How to take part',
+  'home.committees.eyebrow': 'Committees',
+  'home.committees.title': 'Choose your area',
+  'home.committees.hint': 'Tap a committee to see its topics and sources.',
+  'home.program.eyebrow': 'Summit day',
+  'home.program.title': 'How the day goes',
+  'home.scoring.eyebrow': 'Scoring',
+  'home.scoring.title': 'How the jury scores',
+  'home.scoring.lead': 'The jury assesses the submitted work and the presentation, not just how difficult the topic is. The same standards apply to every team.',
+  'home.scoring.more': 'All rules and brief requirements',
+  'home.benefits.eyebrow': 'Awards',
+  'home.benefits.title': 'What participants get',
+  'home.faq.eyebrow': 'FAQ',
+  'home.faq.title': 'Questions and answers',
+  'home.final.title': 'Build a team and join the summit',
+  'home.final.questions': 'Any questions? Message us on Instagram or give us a call.',
+  'sticky.follow': 'Follow',
+  'committees.more': 'More about this committee',
+  'committees.count': '{n} of {total}',
+
   'home.registerMore': 'More about registration',
   'home.rulesMore': 'Rules and scoring criteria',
   'committees.title': 'Committees',
@@ -263,6 +354,7 @@ const en: Record<UiKey, string> = {
   'rules.points': 'points',
   'rules.awards': 'Awards',
   'rules.document': 'Download the regulations (PDF)',
+  'rules.toc': 'On this page',
 
   'register.title': 'Registration',
   'register.howTo': 'How to take part',
@@ -283,6 +375,7 @@ const en: Record<UiKey, string> = {
 
   'contacts.questions': 'Any questions? Message or call us.',
   'footer.organizer': 'Organised by Youth Lab',
+  'footer.nav': 'Sections',
 
   'notFound.title': 'Page not found',
   'notFound.back': 'Back to home',
@@ -291,6 +384,41 @@ const en: Record<UiKey, string> = {
   'language.kk': 'Kazakh',
   'language.en': 'English',
 };
+
+/** Формы слов для чисел: «1 балл», «4 балла», «8 баллов». Ключи — категории Intl.PluralRules. */
+export type PluralForms = Partial<Record<Intl.LDMLPluralRule, string>> & { other: string };
+type PluralWord = 'points' | 'days' | 'hours' | 'minutes' | 'seconds';
+
+export const PLURALS: Record<Lang, Record<PluralWord, PluralForms>> = {
+  ru: {
+    points: { one: 'балл', few: 'балла', many: 'баллов', other: 'балла' },
+    days: { one: 'день', few: 'дня', many: 'дней', other: 'дня' },
+    hours: { one: 'час', few: 'часа', many: 'часов', other: 'часа' },
+    minutes: { one: 'минута', few: 'минуты', many: 'минут', other: 'минуты' },
+    seconds: { one: 'секунда', few: 'секунды', many: 'секунд', other: 'секунды' },
+  },
+  kk: {
+    points: { other: 'ұпай' },
+    days: { other: 'күн' },
+    hours: { other: 'сағат' },
+    minutes: { other: 'минут' },
+    seconds: { other: 'секунд' },
+  },
+  en: {
+    points: { one: 'point', other: 'points' },
+    days: { one: 'day', other: 'days' },
+    hours: { one: 'hour', other: 'hours' },
+    minutes: { one: 'minute', other: 'minutes' },
+    seconds: { one: 'second', other: 'seconds' },
+  },
+};
+
+/** Слово в нужной форме для числа: plural('ru', 4, 'points') → «балла». */
+export function plural(lang: Lang, count: number, word: PluralWord): string {
+  const forms = PLURALS[lang][word];
+  const category = new Intl.PluralRules(INTL_LOCALE[lang]).select(count);
+  return forms[category] ?? forms.other;
+}
 
 const dictionaries: Record<Lang, Record<UiKey, string>> = { ru, kk, en };
 

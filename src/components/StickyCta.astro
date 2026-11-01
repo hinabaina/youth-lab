@@ -1,0 +1,106 @@
+---
+/**
+ * Плашка регистрации внизу экрана на телефоне. Появляется, когда первый экран прокручен,
+ * и прячется у финального блока и подвала, где те же кнопки уже видны.
+ * Открыта регистрация — кнопка на форму; скоро откроется — статус и подписка на Instagram.
+ */
+import { useTranslations, type Lang } from '../i18n/ui';
+import type { getEvent, getRegistration } from '../lib/content';
+import { formatDate, instagramUrl } from '../lib/format';
+import Icon from './Icon.astro';
+
+interface Props {
+  lang: Lang;
+  event: Awaited<ReturnType<typeof getEvent>>;
+  registration: Awaited<ReturnType<typeof getRegistration>>;
+}
+
+const { lang, event, registration } = Astro.props;
+const t = useTranslations(lang);
+const { status, formUrl, opensOn, deadline } = registration;
+const statusText = opensOn ? t('cta.opensOn', { date: formatDate(opensOn, lang) }) : t('cta.soon');
+const show = status === 'open' || (status === 'soon' && Boolean(event.instagram));
+---
+
+{
+  show && (
+    <div
+      data-sticky-cta
+      inert
+      class="fixed inset-x-0 bottom-0 z-40 translate-y-full border-t border-white/10 bg-navy-950/95 px-4 pt-3 text-cream-100 shadow-[0_-12px_30px_-12px_rgb(10_29_54/0.5)] backdrop-blur-md transition-transform duration-300 data-[visible]:translate-y-0 lg:hidden"
+      style="padding-bottom: max(0.75rem, env(safe-area-inset-bottom))"
+    >
+      {status === 'open' ? (
+        <>
+          <a
+            href={formUrl}
+            target="_blank"
+            rel="noopener"
+            class="flex w-full items-center justify-center gap-2 rounded-full bg-gold-500 py-3.5 font-display font-bold text-navy-950 active:bg-gold-400"
+          >
+            {t('cta.open')}
+            <Icon name="arrow-up-right" class="size-4" />
+            <span class="sr-only">({t('a11y.newTab')})</span>
+          </a>
+          {deadline && (
+            <p class="mt-1.5 text-center text-xs text-cream-200">
+              {t('cta.deadline', { date: formatDate(deadline, lang) })}
+            </p>
+          )}
+        </>
+      ) : (
+        <div class="flex items-center justify-between gap-3">
+          <p class="flex min-w-0 items-center gap-2.5 text-sm leading-tight font-semibold">
+            <span class="size-2 shrink-0 animate-pulse-dot rounded-full bg-gold-400" />
+            {statusText}
+          </p>
+          <a
+            href={instagramUrl(event.instagram)}
+            target="_blank"
+            rel="noopener"
+            class="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-gold-500 px-4 py-2.5 text-sm font-bold text-navy-950 active:bg-gold-400"
+          >
+            <Icon name="instagram" class="size-4" />
+            {t('sticky.follow')}
+            <span class="sr-only">({t('a11y.newTab')})</span>
+          </a>
+        </div>
+      )}
+    </div>
+  )
+}
+
+<script>
+  const bar = document.querySelector<HTMLElement>('[data-sticky-cta]');
+  const hero = document.querySelector('[data-hero]');
+
+  if (bar && 'IntersectionObserver' in window) {
+    let heroVisible = true;
+    const stoppers = new Set<Element>();
+
+    const render = () => {
+      const visible = !heroVisible && stoppers.size === 0;
+      bar.toggleAttribute('data-visible', visible);
+      bar.inert = !visible;
+    };
+
+    if (hero) {
+      new IntersectionObserver(([entry]) => {
+        heroVisible = entry.isIntersecting;
+        render();
+      }).observe(hero);
+    } else {
+      heroVisible = false;
+    }
+
+    const stopObserver = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) stoppers.add(entry.target);
+        else stoppers.delete(entry.target);
+      }
+      render();
+    });
+    document.querySelectorAll('[data-hide-sticky], body > footer').forEach((element) => stopObserver.observe(element));
+    render();
+  }
+</script>
