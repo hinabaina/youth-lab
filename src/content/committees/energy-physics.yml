@@ -1,0 +1,29 @@
+ru:
+  order: 6
+  title: Энергетика, физика и инновации
+  topics:
+    - инженерия
+    - доступность
+    - научные инновации
+  sources:
+    - ЮНЕСКО
+    - научные журналы
+  language: ''
+kk:
+  title: Энергетика, физика және инновациялар
+  topics:
+    - инженерия
+    - қолжетімділік
+    - ғылыми инновациялар
+  sources:
+    - ЮНЕСКО
+    - ғылыми журналдар
+en:
+  title: Energy, Physics and Innovation
+  topics:
+    - engineering
+    - accessibility
+    - scientific innovation
+  sources:
+    - UNESCO
+    - scientific journals

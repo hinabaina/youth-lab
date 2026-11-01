@@ -1,0 +1,38 @@
+ru:
+  about: |-
+    **Youth Research Summit** — межшкольный исследовательский турнир. Команды изучают глобальную проблему, формулируют целенаправленный исследовательский вопрос, анализируют надёжные данные, предлагают реалистичное решение и защищают его перед жюри.
+
+    Наша цель — развивать у школьников исследовательские навыки и критическое мышление: учиться обсуждать научные проблемы, предлагать решения и аргументированно их защищать.
+  facts:
+    - value: '6'
+      label: тематических комитетов
+    - value: 2–4
+      label: участника в команде
+    - value: '100'
+      label: 'баллов: 50 за исследование и 50 за выступление'
+    - value: '3'
+      label: 'рабочих языка: казахский, русский, английский'
+kk:
+  facts:
+    - value: '6'
+      label: тақырыптық комитет
+    - value: 2–4
+      label: қатысушыдан тұратын команда
+    - value: '100'
+      label: 'ұпай: зерттеу үшін 50 және баяндама үшін 50'
+    - value: '3'
+      label: 'жұмыс тілі: қазақ, орыс, ағылшын'
+en:
+  about: |-
+    **Youth Research Summit** is an inter-school research tournament. Teams study a global problem, formulate a focused research question, analyse reliable data, propose a realistic solution and defend it before a jury.
+
+    Our goal is to develop students' research skills and critical thinking: to discuss scientific problems, propose solutions and defend them with evidence.
+  facts:
+    - value: '6'
+      label: thematic committees
+    - value: 2–4
+      label: participants per team
+    - value: '100'
+      label: 'points: 50 for research and 50 for the presentation'
+    - value: '3'
+      label: 'working languages: Kazakh, Russian, English'

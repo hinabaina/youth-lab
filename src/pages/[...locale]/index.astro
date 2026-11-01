@@ -1,0 +1,373 @@
+---
+/** Главная: всё главное о саммите на одной странице — для тех, кто пришёл по ссылке из Instagram. */
+import Markdown from '../../components/Markdown.astro';
+import RegistrationCta from '../../components/RegistrationCta.astro';
+import Section from '../../components/Section.astro';
+import { getLang, localeStaticPaths, localizePath, PAGES } from '../../i18n/routing';
+import { useTranslations } from '../../i18n/ui';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import {
+  getCommittees,
+  getEvent,
+  getHome,
+  getJury,
+  getPartners,
+  getProgram,
+  getRegistration,
+} from '../../lib/content';
+import {
+  formatDate,
+  formatNumber,
+  formatPhone,
+  formatWeekday,
+  instagramHandle,
+  instagramUrl,
+  isoDate,
+  phoneHref,
+} from '../../lib/format';
+
+export function getStaticPaths() {
+  return localeStaticPaths();
+}
+
+const lang = getLang(Astro.params.locale);
+const t = useTranslations(lang);
+
+const [event, registration, home, program, committees, jury, partners] = await Promise.all([
+  getEvent(lang),
+  getRegistration(lang),
+  getHome(lang),
+  getProgram(lang),
+  getCommittees(lang),
+  getJury(lang),
+  getPartners(),
+]);
+
+const time = event.timeStart
+  ? [event.timeStart, event.timeEnd].filter(Boolean).join('–')
+  : t('event.timeTba');
+const place = [event.venue, event.city].filter(Boolean).join(', ');
+const fee = event.fee > 0 ? `${formatNumber(event.fee, lang)} ${t('event.feeUnit')}` : t('event.free');
+
+// Данные для поисковиков (Google показывает такие события с датой и местом).
+const eventJsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Event',
+  name: event.name,
+  description: event.tagline || undefined,
+  startDate: event.timeStart ? `${isoDate(event.date)}T${event.timeStart}` : isoDate(event.date),
+  eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+  eventStatus: 'https://schema.org/EventScheduled',
+  location: {
+    '@type': 'Place',
+    name: event.venue,
+    address: {
+      '@type': 'PostalAddress',
+      streetAddress: event.address || undefined,
+      addressLocality: event.city || undefined,
+      addressCountry: 'KZ',
+    },
+  },
+  organizer: { '@type': 'Organization', name: 'Youth Lab' },
+  offers:
+    registration.status === 'open'
+      ? {
+          '@type': 'Offer',
+          price: event.fee,
+          priceCurrency: 'KZT',
+          url: registration.formUrl,
+          availability: 'https://schema.org/InStock',
+        }
+      : undefined,
+};
+---
+
+<BaseLayout lang={lang} page="home">
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(eventJsonLd)} />
+
+  <div class="overflow-hidden bg-navy-900 text-cream-100">
+    <div class="mx-auto grid max-w-6xl items-center gap-10 px-4 pt-10 pb-16 sm:px-6 sm:pt-16 sm:pb-20 lg:grid-cols-[1fr_auto] lg:px-8">
+      <div>
+        <p class="font-display text-sm font-semibold tracking-[0.2em] text-gold-400 uppercase">
+          <time datetime={isoDate(event.date)}>{formatDate(event.date, lang)}</time>
+        </p>
+        <h1 class="mt-3 text-4xl leading-tight font-extrabold text-cream-50 sm:text-5xl lg:text-6xl">
+          {event.name}
+        </h1>
+        {event.tagline && <p class="mt-5 max-w-2xl text-lg text-cream-200 sm:text-xl">{event.tagline}</p>}
+
+        <dl class="mt-8 grid gap-4 sm:grid-cols-2 sm:gap-6">
+          <div class="border-l-2 border-gold-500 pl-4">
+            <dt class="text-sm text-cream-200">{t('event.date')}</dt>
+            <dd class="font-semibold text-cream-50">
+              {formatDate(event.date, lang)}, {formatWeekday(event.date, lang)}
+            </dd>
+            <dd class="text-sm text-cream-200">{time}</dd>
+          </div>
+          <div class="border-l-2 border-gold-500 pl-4">
+            <dt class="text-sm text-cream-200">{t('event.venue')}</dt>
+            <dd class="font-semibold text-cream-50">{place}</dd>
+            {event.address && <dd class="text-sm text-cream-200">{event.address}</dd>}
+          </div>
+        </dl>
+
+        <div class="mt-9">
+          <RegistrationCta lang={lang} registration={registration} tone="dark" />
+        </div>
+      </div>
+
+      <img
+        src="/brand/logo-cream.png"
+        alt=""
+        width="640"
+        height="455"
+        class="mx-auto hidden w-72 opacity-95 lg:block xl:w-80"
+      />
+    </div>
+  </div>
+
+  {
+    home.facts.length > 0 && (
+      <div class="border-b border-cream-200 bg-cream-100">
+        <ul class="mx-auto grid max-w-6xl grid-cols-2 gap-x-6 gap-y-8 px-4 py-10 sm:px-6 md:grid-cols-4 lg:px-8">
+          {home.facts.map((fact) => (
+            <li>
+              <p class="font-display text-4xl font-extrabold text-navy-900">{fact.value}</p>
+              <p class="mt-1 text-sm text-navy-700">{fact.label}</p>
+            </li>
+          ))}
+        </ul>
+      </div>
+    )
+  }
+
+  {
+    home.about && (
+      <Section id="about" title={t('home.about')}>
+        <Markdown source={home.about} class="max-w-3xl text-lg" />
+      </Section>
+    )
+  }
+
+  {
+    committees.length > 0 && (
+      <Section id="committees" title={t('home.committees')} tone="cream">
+        <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {committees.map((committee, index) => (
+            <li class="rounded-2xl border border-cream-200 bg-white p-6">
+              <p class="font-display text-sm font-bold text-gold-700">{String(index + 1).padStart(2, '0')}</p>
+              <h3 class="mt-2 text-lg font-bold">
+                <a href={`${localizePath(PAGES.committees, lang)}#${committee.id}`} class="hover:underline">
+                  {committee.title}
+                </a>
+              </h3>
+              {committee.topics.length > 0 && (
+                <p class="mt-2 text-sm text-navy-700">{committee.topics.join(' · ')}</p>
+              )}
+            </li>
+          ))}
+        </ul>
+        <p class="mt-8">
+          <a
+            href={localizePath(PAGES.committees, lang)}
+            class="font-semibold text-navy-800 underline decoration-gold-500 decoration-2 underline-offset-4"
+          >
+            {t('home.committeesMore')}
+          </a>
+        </p>
+      </Section>
+    )
+  }
+
+  {
+    program.stages.length > 0 && (
+      <Section id="program" title={t('home.program')}>
+        {program.note && <p class="-mt-4 mb-8 text-navy-700">{program.note}</p>}
+        <ol class="relative max-w-3xl space-y-6 border-l-2 border-cream-200 pl-6">
+          {program.stages.map((stage) => (
+            <li class="relative">
+              <span
+                aria-hidden="true"
+                class="absolute top-1.5 -left-[31px] size-3 rounded-full border-2 border-cream-50 bg-gold-500"
+              />
+              {(stage.time || stage.duration) && (
+                <p class="text-sm font-semibold text-gold-700">
+                  {[stage.time, stage.duration].filter(Boolean).join(' · ')}
+                </p>
+              )}
+              <h3 class="text-lg font-bold">{stage.title}</h3>
+              {stage.description && <p class="mt-1 text-navy-700">{stage.description}</p>}
+            </li>
+          ))}
+        </ol>
+      </Section>
+    )
+  }
+
+  <Section id="participation" title={t('home.participation')} tone="cream">
+    <div class="grid gap-10 lg:grid-cols-[1fr_auto] lg:items-start">
+      <dl class="grid gap-6 sm:grid-cols-3">
+        {
+          event.audience && (
+            <div>
+              <dt class="text-sm text-navy-700">{t('event.audience')}</dt>
+              <dd class="mt-1 font-semibold">{event.audience}</dd>
+            </div>
+          )
+        }
+        {
+          event.teamSize && (
+            <div>
+              <dt class="text-sm text-navy-700">{t('event.team')}</dt>
+              <dd class="mt-1 font-semibold">{event.teamSize}</dd>
+            </div>
+          )
+        }
+        <div>
+          <dt class="text-sm text-navy-700">{t('event.fee')}</dt>
+          <dd class="mt-1 font-semibold">{fee}</dd>
+          {event.feeNote && <dd class="mt-1 text-sm text-navy-700">{event.feeNote}</dd>}
+        </div>
+      </dl>
+      <div class="space-y-4">
+        <RegistrationCta lang={lang} registration={registration} showNote={false} />
+        <ul class="space-y-2 text-sm">
+          <li>
+            <a
+              href={localizePath(PAGES.register, lang)}
+              class="font-semibold text-navy-800 underline decoration-gold-500 decoration-2 underline-offset-4"
+            >
+              {t('home.registerMore')}
+            </a>
+          </li>
+          <li>
+            <a
+              href={localizePath(PAGES.rules, lang)}
+              class="font-semibold text-navy-800 underline decoration-gold-500 decoration-2 underline-offset-4"
+            >
+              {t('home.rulesMore')}
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </Section>
+
+  {
+    jury.length > 0 && (
+      <Section id="jury" title={t('home.jury')}>
+        <ul class="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-4">
+          {jury.map((member) => (
+            <li>
+              {member.photo ? (
+                <img
+                  src={member.photo}
+                  alt=""
+                  loading="lazy"
+                  class="aspect-square w-full rounded-2xl bg-cream-200 object-cover"
+                />
+              ) : (
+                <div
+                  aria-hidden="true"
+                  class="flex aspect-square w-full items-center justify-center rounded-2xl bg-navy-100 font-display text-3xl font-bold text-navy-700"
+                >
+                  {member.name.charAt(0)}
+                </div>
+              )}
+              <h3 class="mt-3 font-bold">{member.name}</h3>
+              {member.role && <p class="text-sm text-navy-700">{member.role}</p>}
+            </li>
+          ))}
+        </ul>
+      </Section>
+    )
+  }
+
+  {
+    partners.length > 0 && (
+      <Section id="partners" title={t('home.partners')} tone={jury.length > 0 ? 'cream' : 'white'}>
+        <ul class="flex flex-wrap items-center gap-x-10 gap-y-6">
+          {partners.map((partner) => {
+            const content = partner.logo ? (
+              <img src={partner.logo} alt={partner.name} loading="lazy" class="h-14 w-auto max-w-[180px] object-contain" />
+            ) : (
+              <span class="font-display text-lg font-bold">{partner.name}</span>
+            );
+            return (
+              <li>
+                {partner.url ? (
+                  <a href={partner.url} target="_blank" rel="noopener">
+                    {content}
+                  </a>
+                ) : (
+                  content
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      </Section>
+    )
+  }
+
+  <Section id="contacts" title={t('home.contacts')}>
+    <dl class="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+      {
+        event.phone && (
+          <div>
+            <dt class="text-sm text-navy-700">{t('contacts.phone')}</dt>
+            <dd class="mt-1 font-semibold">
+              <a href={phoneHref(event.phone)} class="hover:underline">
+                {formatPhone(event.phone)}
+              </a>
+            </dd>
+          </div>
+        )
+      }
+      {
+        event.instagram && (
+          <div>
+            <dt class="text-sm text-navy-700">{t('contacts.instagram')}</dt>
+            <dd class="mt-1 font-semibold">
+              <a href={instagramUrl(event.instagram)} target="_blank" rel="noopener" class="hover:underline">
+                @{instagramHandle(event.instagram)}
+                <span class="sr-only"> ({t('a11y.newTab')})</span>
+              </a>
+            </dd>
+          </div>
+        )
+      }
+      {
+        event.email && (
+          <div>
+            <dt class="text-sm text-navy-700">{t('contacts.email')}</dt>
+            <dd class="mt-1 font-semibold">
+              <a href={`mailto:${event.email}`} class="hover:underline">
+                {event.email}
+              </a>
+            </dd>
+          </div>
+        )
+      }
+      <div>
+        <dt class="text-sm text-navy-700">{t('contacts.address')}</dt>
+        <dd class="mt-1 font-semibold">{[event.venue, event.address, event.city].filter(Boolean).join(', ')}</dd>
+        {
+          event.mapUrl && (
+            <dd class="mt-1 text-sm">
+              <a
+                href={event.mapUrl}
+                target="_blank"
+                rel="noopener"
+                class="text-navy-800 underline decoration-gold-500 underline-offset-4"
+              >
+                {t('event.map')}
+                <span class="sr-only"> ({t('a11y.newTab')})</span>
+              </a>
+            </dd>
+          )
+        }
+      </div>
+    </dl>
+  </Section>
+</BaseLayout>

@@ -1,0 +1,35 @@
+ru:
+  order: 2
+  title: Окружающая среда и экология
+  topics:
+    - климат
+    - отходы
+    - вода
+    - устойчивые города
+  sources:
+    - ЮНЕП
+    - ПРООН
+    - МГЭИК
+  language: ''
+kk:
+  title: Қоршаған орта және экология
+  topics:
+    - климат
+    - қалдықтар
+    - су
+    - тұрақты қалалар
+  sources:
+    - UNEP
+    - UNDP
+    - IPCC
+en:
+  title: Environment and Ecology
+  topics:
+    - climate
+    - waste
+    - water
+    - sustainable cities
+  sources:
+    - UNEP
+    - UNDP
+    - IPCC

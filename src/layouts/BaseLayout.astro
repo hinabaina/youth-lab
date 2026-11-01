@@ -1,0 +1,94 @@
+---
+/**
+ * Общий каркас всех страниц: <head>, шапка, подвал.
+ * Данные для шапки и подвала (название, контакты, показывать ли «Итоги») берутся из админки.
+ */
+import '../styles/global.css';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { localizePath, PAGES, type PageKey } from '../i18n/routing';
+import { DEFAULT_LANG, INTL_LOCALE, LOCALES, useTranslations, type Lang } from '../i18n/ui';
+import { getEvent, getResults } from '../lib/content';
+
+interface Props {
+  lang: Lang;
+  /** Ключ страницы для меню и ссылок на другие языки; null — для страницы 404. */
+  page: PageKey | null;
+  /** Заголовок страницы; на главной не нужен. */
+  title?: string;
+  description?: string;
+  noindex?: boolean;
+}
+
+const { lang, page, title, description, noindex = false } = Astro.props;
+const t = useTranslations(lang);
+const event = await getEvent(lang);
+const results = await getResults(lang);
+
+const fullTitle = title ? `${title} — ${event.name}` : event.name;
+const metaDescription = description || event.tagline || t('meta.description');
+
+// Абсолютные ссылки (canonical, hreflang, картинка для превью) возможны, только если
+// при сборке известен адрес сайта — переменная окружения SITE_URL (см. docs/DEPLOY.md).
+const site = Astro.site;
+const path = page ? PAGES[page] : null;
+const canonical = site && path ? new URL(localizePath(path, lang), site).href : undefined;
+const alternates =
+  site && path
+    ? LOCALES.map((code) => ({ code, href: new URL(localizePath(path, code), site).href }))
+    : [];
+const ogImage = site ? new URL('/brand/og-image.png', site).href : undefined;
+const ogLocale = INTL_LOCALE[lang].replace('-', '_');
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{fullTitle}</title>
+    <meta name="description" content={metaDescription} />
+    {noindex && <meta name="robots" content="noindex" />}
+    {canonical && <link rel="canonical" href={canonical} />}
+    {alternates.map(({ code, href }) => <link rel="alternate" hreflang={code} href={href} />)}
+    {
+      alternates.length > 0 && (
+        <link
+          rel="alternate"
+          hreflang="x-default"
+          href={alternates.find(({ code }) => code === DEFAULT_LANG)?.href}
+        />
+      )
+    }
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={event.name} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={metaDescription} />
+    <meta property="og:locale" content={ogLocale} />
+    {canonical && <meta property="og:url" content={canonical} />}
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    {ogImage && <meta property="og:image:width" content="1200" />}
+    {ogImage && <meta property="og:image:height" content="630" />}
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <meta name="theme-color" content="#102c51" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/icon-192.png" type="image/png" sizes="192x192" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <slot name="head" />
+  </head>
+  <body class="flex min-h-dvh flex-col">
+    <a
+      href="#main"
+      class="sr-only z-50 rounded-md bg-gold-500 px-4 py-2 font-semibold text-navy-950 focus:not-sr-only focus:fixed focus:top-3 focus:left-3"
+    >
+      {t('a11y.skip')}
+    </a>
+    <Header lang={lang} page={page} siteName={event.name} showResults={results.published} />
+    <main id="main" class="flex-1">
+      <slot />
+    </main>
+    <Footer lang={lang} event={event} />
+  </body>
+</html>

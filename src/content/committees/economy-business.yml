@@ -1,0 +1,32 @@
+ru:
+  order: 5
+  title: Экономика и бизнес
+  topics:
+    - финансовая грамотность
+    - занятость молодёжи
+    - социальное предпринимательство
+  sources:
+    - Всемирный банк
+    - МОТ
+    - ОЭСР
+  language: ''
+kk:
+  title: Экономика және бизнес
+  topics:
+    - қаржылық сауаттылық
+    - жастарды жұмыспен қамту
+    - әлеуметтік кәсіпкерлік
+  sources:
+    - Дүниежүзілік банк
+    - ХЕҰ
+    - OECD
+en:
+  title: Economics and Business
+  topics:
+    - financial literacy
+    - youth employment
+    - social entrepreneurship
+  sources:
+    - World Bank
+    - ILO
+    - OECD

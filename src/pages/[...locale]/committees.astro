@@ -1,0 +1,72 @@
+---
+/** Комитеты: темы и стартовые источники — чтобы команда выбрала комитет до регистрации. */
+import PageHeader from '../../components/PageHeader.astro';
+import RegistrationCta from '../../components/RegistrationCta.astro';
+import Section from '../../components/Section.astro';
+import { getLang, localeStaticPaths } from '../../i18n/routing';
+import { useTranslations } from '../../i18n/ui';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCommittees, getRegistration } from '../../lib/content';
+
+export function getStaticPaths() {
+  return localeStaticPaths();
+}
+
+const lang = getLang(Astro.params.locale);
+const t = useTranslations(lang);
+const [committees, registration] = await Promise.all([getCommittees(lang), getRegistration(lang)]);
+---
+
+<BaseLayout lang={lang} page="committees" title={t('committees.title')} description={t('committees.lead')}>
+  <PageHeader title={t('committees.title')} lead={t('committees.lead')} />
+
+  <Section>
+    <ol class="grid gap-6 lg:grid-cols-2">
+      {
+        committees.map((committee, index) => (
+          <li id={committee.id} class="scroll-mt-6 rounded-2xl border border-cream-200 bg-white p-6 sm:p-8">
+            <div class="flex flex-wrap items-baseline justify-between gap-2">
+              <p class="font-display text-sm font-bold text-gold-700">{String(index + 1).padStart(2, '0')}</p>
+              {committee.language && (
+                <p class="rounded-full bg-navy-100 px-3 py-1 text-xs font-semibold text-navy-800">
+                  {t('committees.language')}: {t(`language.${committee.language}`)}
+                </p>
+              )}
+            </div>
+            <h2 class="mt-2 text-2xl font-bold">{committee.title}</h2>
+
+            {committee.topics.length > 0 && (
+              <>
+                <h3 class="mt-6 text-sm font-semibold tracking-wide text-navy-700 uppercase">
+                  {t('committees.topics')}
+                </h3>
+                <ul class="mt-2 list-disc space-y-1 pl-5">
+                  {committee.topics.map((topic) => (
+                    <li>{topic}</li>
+                  ))}
+                </ul>
+              </>
+            )}
+
+            {committee.sources.length > 0 && (
+              <>
+                <h3 class="mt-6 text-sm font-semibold tracking-wide text-navy-700 uppercase">
+                  {t('committees.sources')}
+                </h3>
+                <ul class="mt-2 flex flex-wrap gap-2">
+                  {committee.sources.map((source) => (
+                    <li class="rounded-full border border-cream-200 bg-cream-50 px-3 py-1 text-sm">{source}</li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </li>
+        ))
+      }
+    </ol>
+
+    <div class="mt-12">
+      <RegistrationCta lang={lang} registration={registration} />
+    </div>
+  </Section>
+</BaseLayout>

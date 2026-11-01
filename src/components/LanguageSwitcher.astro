@@ -1,0 +1,41 @@
+---
+/** Переключатель языка: ведёт на ту же страницу на другом языке. */
+import { localizePath, PAGES, type PageKey } from '../i18n/routing';
+import { LANG_LABEL, LANG_NAME, LOCALES, useTranslations, type Lang } from '../i18n/ui';
+
+interface Props {
+  lang: Lang;
+  page: PageKey | null;
+  class?: string;
+}
+
+const { lang, page, class: className } = Astro.props;
+const t = useTranslations(lang);
+const path = page ? PAGES[page] : '/';
+---
+
+<nav aria-label={t('lang.label')} class:list={['flex items-center gap-1 text-sm', className]}>
+  {
+    LOCALES.map((code) =>
+      code === lang ? (
+        <span
+          class="rounded-full bg-cream-100 px-2.5 py-1 font-semibold text-navy-900"
+          aria-current="true"
+          title={LANG_NAME[code]}
+        >
+          {LANG_LABEL[code]}
+        </span>
+      ) : (
+        <a
+          href={localizePath(path, code)}
+          hreflang={code}
+          lang={code}
+          title={LANG_NAME[code]}
+          class="rounded-full px-2.5 py-1 font-medium text-cream-100 hover:bg-navy-800"
+        >
+          {LANG_LABEL[code]}
+        </a>
+      ),
+    )
+  }
+</nav>

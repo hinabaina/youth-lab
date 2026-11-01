@@ -1,0 +1,33 @@
+ru:
+  name: Youth Research Summit
+  tagline: Межшкольный исследовательский турнир для учеников 8–11 (12) классов
+  date: 2026-12-05
+  timeStart: ''
+  timeEnd: ''
+  venue: Aqbobek International School
+  city: Актобе
+  address: ул. Ораза Татеулы, 13а
+  mapUrl: ''
+  audience: Ученики 8–11 (12) классов из любых школ
+  teamSize: 2–4 участника, один тематический комитет
+  fee: 2500
+  feeNote: Реквизиты для оплаты будут в форме регистрации.
+  phone: '+77476653463'
+  instagram: youthlab_akx
+  email: ''
+kk:
+  name: Youth Research Summit
+  tagline: 8–11 (12) сынып оқушыларына арналған мектепаралық зерттеу турнирі
+  city: Ақтөбе
+  address: Ораз Татеұлы көшесі, 13а
+  audience: Кез келген мектептің 8–11 (12) сынып оқушылары
+  teamSize: 2–4 қатысушы, бір тақырыптық комитет
+  feeNote: Төлем деректемелері тіркеу формасында көрсетіледі.
+en:
+  name: Youth Research Summit
+  tagline: An inter-school research tournament for students in grades 8–11 (12)
+  city: Aktobe
+  address: 13a Oraz Tateuly Street
+  audience: Students in grades 8–11 (12) from any school
+  teamSize: 2–4 participants, one thematic committee
+  feeNote: Payment details will be provided in the registration form.
