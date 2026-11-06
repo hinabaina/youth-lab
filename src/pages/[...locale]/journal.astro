@@ -1,0 +1,33 @@
+---
+/** Youth Lab Academic Journal: пока заглушка «First issue coming soon», выпуск — после саммита. */
+import HeroBackdrop from '../../components/HeroBackdrop.astro';
+import Icon from '../../components/Icon.astro';
+import { getLang, localeStaticPaths } from '../../i18n/routing';
+import { useTranslations } from '../../i18n/ui';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export function getStaticPaths() {
+  return localeStaticPaths();
+}
+
+const lang = getLang(Astro.params.locale);
+const t = useTranslations(lang);
+const title = 'Youth Lab Academic Journal';
+---
+
+<BaseLayout lang={lang} page="journal" title={title} description={t('journal.lead')}>
+  <section class="relative isolate flex min-h-[70vh] items-center overflow-hidden bg-navy-950 text-cream-100" data-hero>
+    <HeroBackdrop />
+    <div class="mx-auto w-full max-w-6xl px-4 py-20 sm:px-6 lg:px-8">
+      <p class="eyebrow text-gold-400">Youth Lab</p>
+      <h1 class="mt-5 text-4xl leading-tight font-extrabold tracking-tight text-cream-50 sm:text-6xl">
+        Youth Lab <span class="bg-linear-to-r from-gold-300 to-gold-500 bg-clip-text text-transparent">Academic</span> Journal
+      </h1>
+      <p class="mt-8 inline-flex items-center gap-3 rounded-full bg-white/10 px-5 py-2.5 font-display font-bold text-gold-300 ring-1 ring-white/15">
+        <Icon name="book-open" class="size-5" />
+        First issue coming soon
+      </p>
+      <p class="mt-6 max-w-2xl text-lg text-cream-200">{t('journal.lead')}</p>
+    </div>
+  </section>
+</BaseLayout>

@@ -41,6 +41,8 @@ const ru = {
   'nav.rules': 'Правила и оценка',
   'nav.register': 'Регистрация',
   'nav.results': 'Итоги',
+  'nav.journal': 'Журнал',
+  'journal.lead': 'Академический журнал Youth Lab: лучшие исследовательские работы участников. Первый выпуск выйдет после саммита.',
   'lang.label': 'Язык сайта',
 
   'cta.soon': 'Регистрация скоро откроется',
@@ -161,6 +163,8 @@ const kk: Record<UiKey, string> = {
   'nav.rules': 'Ережелер мен бағалау',
   'nav.register': 'Тіркеу',
   'nav.results': 'Қорытынды',
+  'nav.journal': 'Журнал',
+  'journal.lead': 'Youth Lab академиялық журналы: қатысушылардың үздік зерттеу жұмыстары. Алғашқы шығарылым саммиттен кейін жарық көреді.',
   'lang.label': 'Сайт тілі',
 
   'cta.soon': 'Тіркеу жақында ашылады',
@@ -279,6 +283,8 @@ const en: Record<UiKey, string> = {
   'nav.rules': 'Rules and scoring',
   'nav.register': 'Registration',
   'nav.results': 'Results',
+  'nav.journal': 'Journal',
+  'journal.lead': 'The Youth Lab academic journal: the best research by summit participants. The first issue will be published after the summit.',
   'lang.label': 'Site language',
 
   'cta.soon': 'Registration opens soon',

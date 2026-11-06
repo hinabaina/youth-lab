@@ -16,7 +16,7 @@ interface Props {
 const { lang, event, showResults } = Astro.props;
 const t = useTranslations(lang);
 const place = [event.venue, event.address, event.city].filter(Boolean).join(', ');
-const links = (['home', 'committees', 'rules', 'register', 'results'] as const)
+const links = (['home', 'committees', 'rules', 'register', 'journal', 'results'] as const)
   .filter((key) => key !== 'results' || showResults)
   .map((key) => ({ href: localizePath(PAGES[key], lang), label: t(`nav.${key}`) }));
 const summary = [event.name, formatDate(event.date, lang), event.city].filter(Boolean).join(' · ');
