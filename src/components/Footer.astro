@@ -21,7 +21,7 @@ const links = (['home', 'committees', 'rules', 'register', 'journal', 'results']
   .map((key) => ({ href: localizePath(PAGES[key], lang), label: t(`nav.${key}`) }));
 const summary = [event.name, formatDate(event.date, lang), event.city].filter(Boolean).join(' · ');
 
-const headingClass = 'font-display text-xs font-bold tracking-[0.2em] text-gold-400 uppercase';
+const headingClass = 'text-sm font-semibold text-gold-300';
 const linkClass = 'group inline-flex items-start gap-3 transition-colors hover:text-gold-300';
 const iconClass = 'mt-0.5 size-4 shrink-0 text-gold-400';
 ---

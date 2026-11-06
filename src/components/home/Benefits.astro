@@ -1,5 +1,5 @@
 ---
-/** «Что получат участники»: карточки на тёмном фоне. */
+/** «Что получат участники»: три колонки на тёмном фоне. */
 import { isIconName } from '../../icons/icons';
 import type { getHome } from '../../lib/content';
 import Icon from '../Icon.astro';
@@ -11,24 +11,13 @@ interface Props {
 const { benefits } = Astro.props;
 ---
 
-<ul class:list={['grid gap-5', benefits.length >= 3 ? 'md:grid-cols-3' : 'md:grid-cols-2']}>
+<ul class:list={['grid gap-x-10 gap-y-10', benefits.length >= 3 ? 'md:grid-cols-3' : 'md:grid-cols-2']}>
   {
     benefits.map((benefit, index) => (
-      <li
-        class="group relative overflow-hidden rounded-3xl bg-white/[0.06] p-7 ring-1 ring-white/10 backdrop-blur-sm transition duration-300 hover:-translate-y-1 hover:bg-white/10"
-        data-reveal
-        style={`--reveal-delay: ${index * 120}ms`}
-      >
-        <span
-          aria-hidden="true"
-          class="pointer-events-none absolute -top-16 -right-16 size-40 rounded-full bg-gold-500/10 blur-2xl transition-opacity duration-300 group-hover:bg-gold-500/20"
-        >
-        </span>
-        <span class="relative flex size-14 items-center justify-center rounded-2xl bg-linear-to-br from-gold-300 to-gold-600 text-navy-950 shadow-lg shadow-gold-500/20">
-          <Icon name={isIconName(benefit.icon) ? benefit.icon : 'sparkles'} class="size-7" />
-        </span>
-        <h3 class="relative mt-6 text-xl font-bold text-cream-50">{benefit.title}</h3>
-        {benefit.text && <p class="relative mt-2 text-cream-200">{benefit.text}</p>}
+      <li class="border-t border-cream-50/20 pt-6" data-reveal style={`--reveal-delay: ${index * 120}ms`}>
+        <Icon name={isIconName(benefit.icon) ? benefit.icon : 'award'} class="size-8 text-gold-400" strokeWidth={1.5} />
+        <h3 class="mt-5 text-2xl font-semibold text-cream-50">{benefit.title}</h3>
+        {benefit.text && <p class="mt-2 text-cream-200">{benefit.text}</p>}
       </li>
     ))
   }

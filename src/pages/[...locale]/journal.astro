@@ -1,10 +1,12 @@
 ---
-/** Youth Lab Academic Journal: пока заглушка «First issue coming soon», выпуск — после саммита. */
-import HeroBackdrop from '../../components/HeroBackdrop.astro';
-import Icon from '../../components/Icon.astro';
+/**
+ * Youth Lab Academic Journal: пока заглушка «First issue coming soon», выпуск — после саммита.
+ * Страница свёрстана как обложка журнала: шапка между линейками, название антиквой.
+ */
 import { getLang, localeStaticPaths } from '../../i18n/routing';
 import { useTranslations } from '../../i18n/ui';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getEvent } from '../../lib/content';
 
 export function getStaticPaths() {
   return localeStaticPaths();
@@ -12,22 +14,29 @@ export function getStaticPaths() {
 
 const lang = getLang(Astro.params.locale);
 const t = useTranslations(lang);
+const event = await getEvent(lang);
 const title = 'Youth Lab Academic Journal';
 ---
 
 <BaseLayout lang={lang} page="journal" title={title} description={t('journal.lead')}>
-  <section class="relative isolate flex min-h-[70vh] items-center overflow-hidden bg-navy-950 text-cream-100" data-hero>
-    <HeroBackdrop />
-    <div class="mx-auto w-full max-w-6xl px-4 py-20 sm:px-6 lg:px-8">
-      <p class="eyebrow text-gold-400">Youth Lab</p>
-      <h1 class="mt-5 text-4xl leading-tight font-extrabold tracking-tight text-cream-50 sm:text-6xl">
-        Youth Lab <span class="bg-linear-to-r from-gold-300 to-gold-500 bg-clip-text text-transparent">Academic</span> Journal
+  <section class="bg-cream-100 px-4 py-14 sm:px-6 sm:py-24 lg:px-8" data-hero>
+    <div class="mx-auto max-w-3xl rounded-sm bg-cream-50 px-6 py-10 ring-1 ring-cream-200 sm:px-14 sm:py-16" data-reveal>
+      <div
+        class="flex items-center justify-between gap-4 border-y-2 border-navy-900 py-2 text-sm font-semibold text-navy-900"
+      >
+        <span>Youth Lab</span>
+        <span class="tabular-nums">{event.date.getFullYear()}</span>
+      </div>
+
+      <h1 class="mt-10 text-center text-5xl leading-[1.02] font-semibold tracking-[-0.02em] sm:text-7xl">
+        Youth Lab<br />
+        <em class="font-medium text-gold-700">Academic</em> Journal
       </h1>
-      <p class="mt-8 inline-flex items-center gap-3 rounded-full bg-white/10 px-5 py-2.5 font-display font-bold text-gold-300 ring-1 ring-white/15">
-        <Icon name="book-open" class="size-5" />
+
+      <p class="mt-10 border-t border-navy-200 pt-8 text-center font-display text-2xl text-navy-900 italic sm:text-3xl">
         First issue coming soon
       </p>
-      <p class="mt-6 max-w-2xl text-lg text-cream-200">{t('journal.lead')}</p>
+      <p class="mx-auto mt-5 max-w-xl text-center text-lg text-navy-700">{t('journal.lead')}</p>
     </div>
   </section>
 </BaseLayout>

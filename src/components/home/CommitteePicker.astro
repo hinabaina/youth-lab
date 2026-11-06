@@ -1,6 +1,6 @@
 ---
 /**
- * Комитеты на главной: плитки с иконками, по нажатию — направления и стартовые источники.
+ * Комитеты на главной: список-вкладки, по нажатию — направления и стартовые источники.
  * Без JavaScript плитки не видны, а все комитеты идут списком.
  */
 import { localizePath, PAGES } from '../../i18n/routing';
@@ -30,12 +30,10 @@ const total = String(committees.length);
           aria-controls={`committee-panel-${committee.id}`}
           aria-selected={index === 0 ? 'true' : 'false'}
           tabindex={index === 0 ? 0 : -1}
-          class="group flex min-h-16 flex-col items-start gap-2.5 rounded-2xl bg-white p-3 text-left ring-1 ring-cream-200 transition duration-200 hover:ring-gold-400 aria-selected:bg-navy-900 aria-selected:text-cream-50 aria-selected:shadow-lg aria-selected:shadow-navy-900/20 aria-selected:ring-navy-900 lg:flex-row lg:items-center lg:gap-3"
+          class="group flex min-h-14 flex-col items-start gap-2 rounded-lg bg-white px-3 py-3 text-left ring-1 ring-cream-200 transition-colors hover:ring-navy-300 aria-selected:bg-navy-900 aria-selected:text-cream-50 aria-selected:ring-navy-900 lg:flex-row lg:items-center lg:gap-3"
         >
-          <span class="flex size-10 shrink-0 items-center justify-center rounded-xl bg-gold-100 text-gold-700 transition-colors group-aria-selected:bg-gold-500 group-aria-selected:text-navy-950">
-            <Icon name={isIconName(committee.icon) ? committee.icon : 'lightbulb'} class="size-5" />
-          </span>
-          <span class="min-w-0 font-display text-sm leading-snug font-bold break-words sm:text-[0.95rem]">{committee.title}</span>
+          <Icon name={isIconName(committee.icon) ? committee.icon : 'lightbulb'} class="size-5 shrink-0 text-gold-700 group-aria-selected:text-gold-400" />
+          <span class="min-w-0 text-sm leading-snug font-semibold break-words sm:text-[0.95rem]">{committee.title}</span>
         </button>
       ))
     }
@@ -49,21 +47,16 @@ const total = String(committees.length);
           id={`committee-panel-${committee.id}`}
           aria-labelledby={`committee-tab-${committee.id}`}
           tabindex="0"
-          class="relative overflow-hidden rounded-3xl bg-white p-6 shadow-[0_1px_2px_rgb(16_44_81/0.06),0_16px_40px_-20px_rgb(16_44_81/0.35)] ring-1 ring-cream-200 sm:p-9"
+          class="rounded-2xl bg-white p-6 ring-1 ring-cream-200 sm:p-9"
         >
-          <span aria-hidden="true" class="pointer-events-none absolute -right-8 -bottom-10 text-navy-50">
-            <Icon name={isIconName(committee.icon) ? committee.icon : 'lightbulb'} class="size-56" strokeWidth={1.25} />
-          </span>
-          <div class="relative">
+          <div>
             <div class="flex flex-wrap items-center justify-between gap-3">
-              <span class="flex size-14 items-center justify-center rounded-2xl bg-navy-900 text-gold-400 shadow-lg shadow-navy-900/25">
-                <Icon name={isIconName(committee.icon) ? committee.icon : 'lightbulb'} class="size-7" />
-              </span>
-              <span class="font-display text-sm font-bold text-navy-300 tabular-nums">
+              <Icon name={isIconName(committee.icon) ? committee.icon : 'lightbulb'} class="size-9 text-gold-600" strokeWidth={1.5} />
+              <span class="text-sm font-medium text-navy-700 tabular-nums">
                 {t('committees.count', { n: String(index + 1), total })}
               </span>
             </div>
-            <h3 class="mt-5 text-2xl font-extrabold sm:text-3xl">{committee.title}</h3>
+            <h3 class="mt-4 text-2xl font-semibold sm:text-3xl">{committee.title}</h3>
             {committee.language && (
               <p class="mt-3 inline-flex rounded-full bg-navy-50 px-3 py-1 text-xs font-semibold text-navy-800">
                 {t('committees.language')}: {t(`language.${committee.language}`)}
@@ -72,10 +65,10 @@ const total = String(committees.length);
 
             {committee.topics.length > 0 && (
               <>
-                <h4 class="mt-7 text-xs font-bold tracking-[0.18em] text-gold-700 uppercase">{t('committees.topics')}</h4>
+                <h4 class="mt-7 text-sm font-semibold text-navy-700">{t('committees.topics')}</h4>
                 <ul class="mt-3 flex flex-wrap gap-2">
                   {committee.topics.map((topic) => (
-                    <li class="rounded-full bg-navy-900 px-4 py-2 text-sm font-medium text-cream-50">{topic}</li>
+                    <li class="rounded-full px-3.5 py-1.5 text-sm font-medium text-navy-900 ring-1 ring-navy-200">{topic}</li>
                   ))}
                 </ul>
               </>
@@ -83,10 +76,10 @@ const total = String(committees.length);
 
             {committee.sources.length > 0 && (
               <>
-                <h4 class="mt-7 text-xs font-bold tracking-[0.18em] text-gold-700 uppercase">{t('committees.sources')}</h4>
+                <h4 class="mt-7 text-sm font-semibold text-navy-700">{t('committees.sources')}</h4>
                 <ul class="mt-3 flex flex-wrap gap-2">
                   {committee.sources.map((source) => (
-                    <li class="inline-flex items-center gap-1.5 rounded-full bg-cream-100 px-3.5 py-1.5 text-sm font-medium text-navy-800 ring-1 ring-cream-200">
+                    <li class="inline-flex items-center gap-1.5 rounded-full bg-cream-100 px-3.5 py-1.5 text-sm font-medium text-navy-800">
                       <Icon name="book-open" class="size-3.5 text-gold-700" />
                       {source}
                     </li>
