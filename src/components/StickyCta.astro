@@ -36,7 +36,7 @@ const show = status === 'open' || (status === 'soon' && Boolean(event.instagram)
             href={formUrl}
             target="_blank"
             rel="noopener"
-            class="flex w-full items-center justify-center gap-2 rounded-full bg-gold-500 py-3.5 font-display font-bold text-navy-950 active:bg-gold-400"
+            class="flex w-full items-center justify-center gap-2 rounded-lg bg-gold-500 py-3.5 font-semibold text-navy-950 active:bg-gold-400"
           >
             {t('cta.open')}
             <Icon name="arrow-up-right" class="size-4" />
@@ -51,14 +51,14 @@ const show = status === 'open' || (status === 'soon' && Boolean(event.instagram)
       ) : (
         <div class="flex items-center justify-between gap-3">
           <p class="flex min-w-0 items-center gap-2.5 text-sm leading-tight font-semibold">
-            <span class="size-2 shrink-0 animate-pulse-dot rounded-full bg-gold-400" />
+            <span class="size-2 shrink-0 rounded-full bg-gold-400" />
             {statusText}
           </p>
           <a
             href={instagramUrl(event.instagram)}
             target="_blank"
             rel="noopener"
-            class="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-gold-500 px-4 py-2.5 text-sm font-bold text-navy-950 active:bg-gold-400"
+            class="inline-flex shrink-0 items-center gap-1.5 rounded-lg bg-gold-500 px-4 py-2.5 text-sm font-semibold text-navy-950 active:bg-gold-400"
           >
             <Icon name="instagram" class="size-4" />
             {t('sticky.follow')}

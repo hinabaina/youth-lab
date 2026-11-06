@@ -3,16 +3,16 @@
  * «Как принять участие»: шаги от сбора команды до итогов.
  * Золотая линия слева заполняется по мере прокрутки, пройденные шаги подсвечиваются.
  */
-import { useTranslations, type Lang } from '../i18n/ui';
+import type { Lang } from '../i18n/ui';
 
 interface Props {
+  /** Язык страницы (на будущее; подписи шагов сейчас не нужны). */
   lang: Lang;
   steps: { title: string; text: string }[];
   class?: string;
 }
 
-const { lang, steps, class: className } = Astro.props;
-const t = useTranslations(lang);
+const { steps, class: className } = Astro.props;
 ---
 
 <ol class:list={['relative', className]} data-journey>
@@ -20,20 +20,17 @@ const t = useTranslations(lang);
   </span>
   <span
     aria-hidden="true"
-    class="absolute top-6 bottom-6 left-[1.375rem] w-0.5 origin-top -translate-x-1/2 scale-y-[var(--progress,0)] rounded-full bg-linear-to-b from-gold-400 to-gold-600"
+    class="absolute top-6 bottom-6 left-[1.375rem] w-0.5 origin-top -translate-x-1/2 scale-y-[var(--progress,0)] rounded-full bg-gold-500"
     data-journey-line
   >
   </span>
   {
     steps.map((step, index) => (
       <li class="group relative pb-10 pl-16 last:pb-0" data-journey-step data-reveal>
-        <span class="absolute top-0 left-0 flex size-11 items-center justify-center rounded-full border-2 border-navy-100 bg-white font-display text-lg font-extrabold text-navy-800 transition-colors duration-500 group-data-[active]:border-gold-500 group-data-[active]:bg-gold-500 group-data-[active]:text-navy-950">
+        <span class="absolute top-0 left-0 flex size-11 items-center justify-center rounded-full border-2 border-navy-100 bg-white font-display text-lg font-semibold text-navy-800 transition-colors duration-500 group-data-[active]:border-gold-500 group-data-[active]:bg-gold-500 group-data-[active]:text-navy-950">
           {index + 1}
         </span>
-        <p class="pt-0.5 text-xs font-bold tracking-[0.18em] text-gold-700 uppercase">
-          {t('step.label', { n: String(index + 1) })}
-        </p>
-        <h3 class="mt-1 text-xl font-bold sm:text-2xl">{step.title}</h3>
+        <h3 class="pt-1.5 text-xl font-semibold sm:text-2xl">{step.title}</h3>
         {step.text && <p class="mt-2 max-w-xl text-navy-700">{step.text}</p>}
       </li>
     ))

@@ -7,6 +7,7 @@ export const PAGES = {
   rules: '/rules/',
   register: '/register/',
   results: '/results/',
+  journal: '/journal/',
 } as const;
 
 export type PageKey = keyof typeof PAGES;

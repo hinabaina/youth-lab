@@ -20,10 +20,8 @@ const { lang, registration, tone = 'light', showNote = true } = Astro.props;
 const t = useTranslations(lang);
 const { status, formUrl, opensOn, deadline, note } = registration;
 
-const pill =
-  tone === 'dark'
-    ? 'bg-white/[0.06] text-cream-50 ring-white/15'
-    : 'bg-white text-navy-900 ring-cream-200';
+// Статус — обычный текст, а не плашка: иначе его принимают за кнопку.
+const statusClass = tone === 'dark' ? 'text-cream-50' : 'text-navy-900';
 const soonText = opensOn ? t('cta.opensOn', { date: formatDate(opensOn, lang) }) : t('cta.soon');
 // Примечание, которое повторяет статус, не показываем второй раз.
 const visibleNote = showNote && note && !(status === 'soon' && note.startsWith(soonText)) ? note : '';
@@ -36,7 +34,7 @@ const visibleNote = showNote && note && !(status === 'soon' && note.startsWith(s
         href={formUrl}
         target="_blank"
         rel="noopener"
-        class="inline-flex items-center gap-2 rounded-full bg-gold-500 px-7 py-3.5 font-display text-base font-bold text-navy-950 shadow-lg shadow-gold-500/20 transition hover:-translate-y-0.5 hover:bg-gold-400"
+        class="inline-flex items-center gap-2 rounded-lg bg-gold-500 px-7 py-3.5 text-base font-semibold text-navy-950 transition hover:bg-gold-400"
       >
         {t('cta.open')}
         <Icon name="arrow-up-right" class="size-4" />
@@ -46,15 +44,15 @@ const visibleNote = showNote && note && !(status === 'soon' && note.startsWith(s
   }
   {
     status === 'soon' && (
-      <p class:list={['inline-flex items-center gap-3 rounded-full px-5 py-3 font-semibold ring-1', pill]}>
-        <span aria-hidden="true" class="size-2.5 animate-pulse-dot rounded-full bg-gold-500" />
+      <p class:list={['inline-flex items-center gap-2.5 text-lg font-semibold', statusClass]}>
+        <span aria-hidden="true" class="size-2.5 rounded-full bg-gold-500" />
         {soonText}
       </p>
     )
   }
   {
     status === 'closed' && (
-      <p class:list={['inline-flex rounded-full px-5 py-3 font-semibold ring-1', pill]}>{t('cta.closed')}</p>
+      <p class:list={['text-lg font-semibold', statusClass]}>{t('cta.closed')}</p>
     )
   }
   {

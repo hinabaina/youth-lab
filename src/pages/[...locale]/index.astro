@@ -104,10 +104,10 @@ const eventJsonLd = {
 
   {
     home.steps.length > 0 && (
-      <Section id="steps" tone="cream" eyebrow={t('home.steps.eyebrow')} title={t('home.steps.title')}>
+      <Section id="steps" tone="cream" title={t('home.steps.title')}>
         <div class="grid gap-12 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-16">
           <Journey lang={lang} steps={home.steps} />
-          <aside class="h-fit space-y-5 rounded-3xl bg-white p-6 ring-1 ring-cream-200 lg:sticky lg:top-24" data-reveal>
+          <aside class="h-fit space-y-5 rounded-2xl bg-white p-6 ring-1 ring-cream-200 lg:sticky lg:top-24" data-reveal>
             <RegistrationCta lang={lang} registration={registration} />
             <dl class="space-y-4 border-t border-cream-200 pt-5 text-sm">
               {event.audience && (
@@ -138,7 +138,6 @@ const eventJsonLd = {
     committees.length > 0 && (
       <Section
         id="committees"
-        eyebrow={t('home.committees.eyebrow')}
         title={t('home.committees.title')}
         lead={t('committees.lead')}
       >
@@ -152,9 +151,8 @@ const eventJsonLd = {
       <Section
         id="program"
         tone="cream"
-        eyebrow={`${t('home.program.eyebrow')} · ${formatDate(event.date, lang)}`}
         title={t('home.program.title')}
-        lead={program.note}
+        lead={[formatDate(event.date, lang), program.note].filter(Boolean).join('. ')}
       >
         <ProgramTimeline stages={program.stages} />
       </Section>
@@ -165,7 +163,6 @@ const eventJsonLd = {
     rules.rubrics.length > 0 && (
       <Section
         id="scoring"
-        eyebrow={t('home.scoring.eyebrow')}
         title={t('home.scoring.title')}
         lead={t('home.scoring.lead')}
       >
@@ -176,7 +173,7 @@ const eventJsonLd = {
 
   {
     home.benefits.length > 0 && (
-      <Section id="benefits" tone="navy" eyebrow={t('home.benefits.eyebrow')} title={t('home.benefits.title')}>
+      <Section id="benefits" tone="navy" title={t('home.benefits.title')}>
         <Benefits benefits={home.benefits} />
       </Section>
     )
@@ -193,12 +190,12 @@ const eventJsonLd = {
                   src={member.photo}
                   alt=""
                   loading="lazy"
-                  class="aspect-square w-full rounded-3xl bg-cream-200 object-cover"
+                  class="aspect-square w-full rounded-2xl bg-cream-200 object-cover"
                 />
               ) : (
                 <div
                   aria-hidden="true"
-                  class="flex aspect-square w-full items-center justify-center rounded-3xl bg-navy-900 font-display text-4xl font-bold text-gold-400"
+                  class="flex aspect-square w-full items-center justify-center rounded-2xl bg-navy-900 font-display text-4xl font-bold text-gold-400"
                 >
                   {member.name.charAt(0)}
                 </div>
@@ -244,7 +241,6 @@ const eventJsonLd = {
       <Section
         id="faq"
         tone={faqTone}
-        eyebrow={t('home.faq.eyebrow')}
         title={t('home.faq.title')}
         center
       >

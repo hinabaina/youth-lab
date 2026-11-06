@@ -1,5 +1,5 @@
 ---
-/** «Формат»: зачем саммит (текст «О саммите») и три этапа дня карточками, под ними — цифры. */
+/** «Формат»: зачем саммит (текст «О саммите») и три этапа дня колонками, под ними — цифры. */
 import { useTranslations, type Lang } from '../../i18n/ui';
 import { isIconName } from '../../icons/icons';
 import type { getHome } from '../../lib/content';
@@ -16,34 +16,27 @@ const { lang, home } = Astro.props;
 const t = useTranslations(lang);
 ---
 
-<Section id="format" eyebrow={t('home.format.eyebrow')} title={t('home.format.title')}>
+<Section id="format" title={t('home.format.title')}>
   {home.about && <Markdown slot="lead" source={home.about} />}
 
   {
     home.format.length > 0 && (
-      <ol class="grid gap-5 md:grid-cols-3">
+      <ol class="grid gap-x-10 gap-y-10 md:grid-cols-3">
         {home.format.map((item, index) => (
-          <li
-            class="group relative overflow-hidden rounded-3xl bg-white p-7 shadow-[0_1px_2px_rgb(16_44_81/0.06),0_16px_40px_-20px_rgb(16_44_81/0.35)] ring-1 ring-cream-200 transition duration-300 hover:-translate-y-1 hover:shadow-[0_1px_2px_rgb(16_44_81/0.06),0_24px_48px_-20px_rgb(16_44_81/0.45)]"
-            data-reveal
-            style={`--reveal-delay: ${index * 120}ms`}
-          >
-            <span
-              aria-hidden="true"
-              class="pointer-events-none absolute top-5 right-6 font-display text-6xl leading-none font-extrabold text-navy-50 transition-colors duration-300 group-hover:text-gold-100"
-            >
-              {index + 1}
-            </span>
-            <span class="relative flex size-14 items-center justify-center rounded-2xl bg-navy-900 text-gold-400 shadow-lg shadow-navy-900/25">
-              <Icon name={isIconName(item.icon) ? item.icon : 'sparkles'} class="size-7" />
-            </span>
-            <h3 class="relative mt-6 text-2xl font-extrabold">{item.title}</h3>
-            {item.meta && (
-              <p class="relative mt-2 inline-flex rounded-full bg-gold-100 px-3 py-1 text-xs font-bold text-gold-700">
-                {item.meta}
-              </p>
-            )}
-            {item.text && <p class="relative mt-4 text-navy-700">{item.text}</p>}
+          <li class="border-t-2 border-navy-900 pt-5" data-reveal style={`--reveal-delay: ${index * 120}ms`}>
+            <div class="flex items-baseline justify-between gap-4">
+              <span aria-hidden="true" class="font-display text-5xl leading-none font-medium text-gold-600 italic">
+                {index + 1}
+              </span>
+              {item.meta && (
+                <p class="inline-flex items-center gap-1.5 text-sm font-medium text-navy-700">
+                  <Icon name={isIconName(item.icon) ? item.icon : 'clock'} class="size-4 text-gold-700" />
+                  {item.meta}
+                </p>
+              )}
+            </div>
+            <h3 class="mt-4 text-2xl font-semibold">{item.title}</h3>
+            {item.text && <p class="mt-3 text-navy-700">{item.text}</p>}
           </li>
         ))}
       </ol>
@@ -52,12 +45,12 @@ const t = useTranslations(lang);
 
   {
     home.facts.length > 0 && (
-      <ul class="mt-12 grid grid-cols-2 gap-x-6 gap-y-8 border-t border-cream-200 pt-10 md:grid-cols-4" data-reveal>
+      <ul class="mt-14 grid grid-cols-2 gap-x-6 gap-y-8 rounded-2xl bg-cream-100 px-6 py-8 sm:px-8 md:grid-cols-4" data-reveal>
         {home.facts.map((fact) => {
           const numeric = /^\d+$/.test(fact.value);
           return (
             <li>
-              <p class="font-display text-4xl font-extrabold text-navy-900 tabular-nums sm:text-5xl">
+              <p class="font-display text-4xl font-medium text-navy-900 tabular-nums sm:text-5xl">
                 {numeric ? <span data-count={fact.value}>{fact.value}</span> : fact.value}
               </p>
               <p class="mt-2 text-sm text-navy-700">{fact.label}</p>

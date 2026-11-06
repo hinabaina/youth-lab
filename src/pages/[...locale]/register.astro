@@ -59,19 +59,18 @@ const facts = [
   <Section>
     <div class="grid gap-12 lg:grid-cols-[minmax(0,1fr)_22rem] lg:gap-16">
       <div>
-        <p class="eyebrow text-gold-700">{t('home.steps.eyebrow')}</p>
-        <h2 class="mt-4 text-3xl font-extrabold tracking-tight sm:text-4xl">{t('register.howTo')}</h2>
+        <h2 class="text-3xl font-bold tracking-tight sm:text-4xl">{t('register.howTo')}</h2>
         {home.steps.length > 0 && <Journey lang={lang} steps={home.steps} class="mt-10" />}
         {
           registration.body && (
-            <div class="mt-12 rounded-3xl bg-cream-100 p-6 ring-1 ring-cream-200 sm:p-8" data-reveal>
+            <div class="mt-12 rounded-2xl bg-cream-100 p-6 ring-1 ring-cream-200 sm:p-8" data-reveal>
               <Markdown source={registration.body} />
             </div>
           )
         }
       </div>
 
-      <aside class="h-fit rounded-3xl bg-white p-6 ring-1 ring-cream-200 lg:sticky lg:top-24" data-reveal>
+      <aside class="h-fit rounded-2xl bg-white p-6 ring-1 ring-cream-200 lg:sticky lg:top-24" data-reveal>
         <dl class="space-y-5">
           {
             facts.map((fact) => (
@@ -96,7 +95,7 @@ const facts = [
 
   {
     home.faq.length > 0 && (
-      <Section id="faq" tone="cream" eyebrow={t('home.faq.eyebrow')} title={t('home.faq.title')} center>
+      <Section id="faq" tone="cream" title={t('home.faq.title')} center>
         <Faq items={home.faq} />
       </Section>
     )
@@ -105,7 +104,7 @@ const facts = [
   {
     (event.phone || event.instagram) && (
       <Section>
-        <div class="flex flex-col gap-6 rounded-3xl bg-navy-950 p-6 text-cream-100 sm:p-10 lg:flex-row lg:items-center lg:justify-between">
+        <div class="flex flex-col gap-6 rounded-2xl bg-navy-950 p-6 text-cream-100 sm:p-10 lg:flex-row lg:items-center lg:justify-between">
           <p class="max-w-md font-display text-xl font-bold text-cream-50 sm:text-2xl">{t('contacts.questions')}</p>
           <ul class="flex flex-wrap gap-3">
             {event.instagram && (
@@ -114,7 +113,7 @@ const facts = [
                   href={instagramUrl(event.instagram)}
                   target="_blank"
                   rel="noopener"
-                  class="inline-flex items-center gap-2 rounded-full bg-gold-500 px-5 py-3 font-semibold text-navy-950 transition hover:bg-gold-400"
+                  class="inline-flex items-center gap-2 rounded-lg bg-gold-500 px-5 py-3 font-semibold text-navy-950 transition hover:bg-gold-400"
                 >
                   <Icon name="instagram" class="size-4" />@{instagramHandle(event.instagram)}
                   <span class="sr-only"> ({t('a11y.newTab')})</span>

@@ -15,7 +15,7 @@ const meta = (stage: Props['stages'][number]) => [stage.time, stage.duration].fi
 ---
 
 <ol class="relative mx-auto max-w-3xl">
-  <span aria-hidden="true" class="absolute top-4 bottom-4 left-[0.6875rem] w-0.5 rounded-full bg-linear-to-b from-gold-400 via-navy-200 to-gold-400 sm:left-[0.9375rem]">
+  <span aria-hidden="true" class="absolute top-4 bottom-4 left-[0.6875rem] w-0.5 bg-navy-200 sm:left-[0.9375rem]">
   </span>
   {
     stages.map((stage, index) => {
@@ -25,19 +25,18 @@ const meta = (stage: Props['stages'][number]) => [stage.time, stage.duration].fi
           <span
             aria-hidden="true"
             class:list={[
-              'absolute left-0 flex items-center justify-center rounded-full ring-4 ring-cream-50 sm:left-0.5',
+              'absolute left-0 flex items-center justify-center rounded-full ring-4 ring-cream-100 sm:left-0.5',
               kind === 'session' && 'top-5 size-6 bg-gold-500 text-navy-950 sm:size-7',
               kind === 'regular' && 'top-5 size-6 border-2 border-navy-900 bg-cream-50 sm:size-7',
               kind === 'break' && 'top-3 size-6 bg-navy-100 text-navy-700 sm:size-7',
             ]}
           >
-            {kind === 'session' && <Icon name="sparkles" class="size-3.5" />}
-            {kind === 'break' && <Icon name="coffee" class="size-3.5" />}
+                        {kind === 'break' && <Icon name="coffee" class="size-3.5" />}
           </span>
 
           {kind === 'break' ? (
             <div class="flex flex-wrap items-baseline gap-x-3 gap-y-1 rounded-2xl border border-dashed border-cream-300 px-5 py-3">
-              <h3 class="font-display text-base font-bold text-navy-800">{stage.title}</h3>
+              <h3 class="font-display text-base font-semibold text-navy-800">{stage.title}</h3>
               {meta(stage) && <p class="text-sm font-semibold text-gold-700">{meta(stage)}</p>}
               {stage.description && <p class="w-full text-sm text-navy-700">{stage.description}</p>}
             </div>
@@ -46,22 +45,22 @@ const meta = (stage: Props['stages'][number]) => [stage.time, stage.duration].fi
               class:list={[
                 'rounded-2xl p-5 sm:p-6',
                 kind === 'session'
-                  ? 'bg-navy-900 text-cream-100 shadow-[0_18px_40px_-22px_rgb(10_29_54/0.8)]'
+                  ? 'bg-navy-900 text-cream-100'
                   : 'bg-white ring-1 ring-cream-200',
               ]}
             >
               {meta(stage) && (
                 <p
                   class:list={[
-                    'inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold',
-                    kind === 'session' ? 'bg-gold-500 text-navy-950' : 'bg-gold-100 text-gold-700',
+                    'inline-flex items-center gap-1.5 text-sm font-semibold tabular-nums',
+                    kind === 'session' ? 'text-gold-300' : 'text-gold-700',
                   ]}
                 >
                   <Icon name="clock" class="size-3.5" />
                   {meta(stage)}
                 </p>
               )}
-              <h3 class:list={['text-lg font-bold sm:text-xl', meta(stage) && 'mt-3', kind === 'session' && 'text-cream-50']}>
+              <h3 class:list={['text-lg font-semibold sm:text-xl', meta(stage) && 'mt-2', kind === 'session' && 'text-cream-50']}>
                 {stage.title}
               </h3>
               {stage.description && (

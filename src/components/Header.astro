@@ -20,7 +20,7 @@ interface Props {
 const { lang, page, siteName, showResults } = Astro.props;
 const t = useTranslations(lang);
 
-const items = (['committees', 'rules', 'register', 'results'] as const)
+const items = (['committees', 'rules', 'register', 'journal', 'results'] as const)
   .filter((key) => key !== 'results' || showResults)
   .map((key) => ({ key, href: localizePath(PAGES[key], lang), label: t(`nav.${key}`) }));
 const mobileItems = [{ key: 'home' as const, href: localizePath('/', lang), label: t('nav.home') }, ...items];

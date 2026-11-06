@@ -13,7 +13,7 @@ const { items, class: className } = Astro.props;
 
 <div
   class:list={[
-    'mx-auto max-w-3xl divide-y divide-cream-200 rounded-3xl bg-white px-5 shadow-[0_1px_2px_rgb(16_44_81/0.06),0_16px_40px_-24px_rgb(16_44_81/0.35)] ring-1 ring-cream-200 sm:px-8',
+    'mx-auto max-w-3xl divide-y divide-navy-100 border-y border-navy-200',
     className,
   ]}
   data-reveal
@@ -21,9 +21,9 @@ const { items, class: className } = Astro.props;
   {
     items.map((item) => (
       <details name="faq" class="faq-item group">
-        <summary class="flex cursor-pointer list-none items-center justify-between gap-4 py-5 font-display text-base font-bold text-navy-900 sm:text-lg [&::-webkit-details-marker]:hidden">
+        <summary class="flex cursor-pointer list-none items-center justify-between gap-4 py-5 text-base font-semibold text-navy-900 sm:text-lg [&::-webkit-details-marker]:hidden">
           {item.question}
-          <span class="flex size-8 shrink-0 items-center justify-center rounded-full bg-navy-50 text-navy-800 transition duration-300 group-open:rotate-45 group-open:bg-gold-500 group-open:text-navy-950">
+          <span class="flex size-8 shrink-0 items-center justify-center text-gold-700 transition-transform duration-300 group-open:rotate-45">
             <Icon name="plus" class="size-4" />
           </span>
         </summary>
